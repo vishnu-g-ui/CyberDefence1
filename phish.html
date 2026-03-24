@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberDefence</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<style>
+body {
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+              url('/img/thumb-1920-480530.png');
+  background-size: cover;
+  background-position: center;
+}
+
+</style>
+<body class="phish.html">
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">CyberDefence</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="card.html">Tools</a></li>
+      <li><a href="#">Attack Lab</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contant</a></li>
+    </ul>
+
+    <button class="btn">Login</button>
+</nav>
+<!-- MAIN BODY -->
+<div class="main-container">
+    <h2>Phishing Website Detector</h2>
+        <div class="phish-search">
+            <input type="text" id="urlInput" placeholder="Enter Website URL">
+            <button onclick="checkURL()">Check</button>
+            <p id="result"></p>
+            <ul id="reasons"></ul>
+        </div>
+</div>
+<script>
+    function checkURL(){
+
+let url = document.getElementById("urlInput").value;
+let suspiciousWords = ["-login", "-verify", "-bank", "-secure", "-account", "-update"];
+let score = 0;
+let reasons = [];
+let result = document.getElementById("result");
+let reasonList = document.getElementById("reasons");
+reasonList.innerHTML = "";
+// URL length check
+if(url.length > 30){
+    score++;
+    reasons.push("URL is too long, please enter a valid URL");
+}
+// Protocol check
+if(url.startsWith("https://")){
+    reasons.push("Website is using HTTPS (secure)");
+}
+else if(url.startsWith("http://")){
+    score++;
+    reasons.push("Website is using HTTP (not secure)");
+}
+else{
+    score++;
+    reasons.push("Invalid URL format");
+}
+// Suspicious word check
+for(let word of suspiciousWords){
+    if(url.includes(word)){
+        score++;
+        reasons.push("Suspicious word detected: " + word);
+    }
+}
+// RESULT
+if(url.startsWith("https://") && score < 2){
+    result.innerText = "✅ Website looks Safe";
+    result.className = "safe show";
+}
+else if(url.startsWith("http://")){
+    result.innerText = "⚠️ Website is Not Safe";
+    result.className = "danger show";
+}
+else{
+    result.innerText = "⚠️ Invalid URL";
+    result.className = "danger show";
+}
+// Show reasons
+for(let r of reasons){
+    let li = document.createElement("li");
+    li.innerText = r;
+    reasonList.appendChild(li);
+}
+
+}
+// ENTER KEY SUPPORT
+document.getElementById("urlInput").addEventListener("keypress", function(event){
+
+if(event.key === "Enter"){
+    event.preventDefault();
+    checkURL();
+}
+});
+
+</script>
+</body>
+</html>
