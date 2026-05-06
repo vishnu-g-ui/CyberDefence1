@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <title>CyberDefence</title>
+  <title>CyberDefence – Tools</title>
 </head>
 <body>
- 
-<!-- Navbar -->
 <nav>
   <div class="logo">CyberDefence</div>
   <button class="nav-toggle" onclick="toggleNav()">☰</button>
@@ -19,49 +17,78 @@
     <li><a href="https://vishnu-profile.lovable.app">About</a></li>
     <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
   </ul>
-  <button class="btn">Login</button>
+  <div id="authArea" style="display:flex;align-items:center;gap:8px;">
+    <a href="index.html" class="btn">Login</a>
+  </div>
 </nav>
- 
-<!-- Search -->
+
 <div class="container">
-  <form>
-    <input type="text" placeholder="Search here..." name="q">
-    <a href="" class="btn1">Search</a>
+  <form onsubmit="return false;">
+    <input type="text" placeholder="Search tools..." id="searchInput" oninput="filterCards()">
   </form>
 </div>
- 
-<!-- Cards -->
+
 <div class="card-container">
- 
-  <div class="card">
+  <div class="card" data-name="phishing">
     <img src="img/ChatGPT Image Mar 8, 2026, 07_41_10 PM.png" alt="Phishing Hunter">
     <h3>Phishing Hunter</h3>
-    <p class="role">Click here to check whether the link is valid or not</p>
-    <a href="./phish.html" class="btn2">Phish Checker</a>
+    <p class="role">Check whether a link is valid or a phishing trap</p>
+    <a href="./phish.html" class="btn2" onclick="logTool('Phishing Hunter')">Phish Checker</a>
   </div>
- 
-  <div class="card">
+  <div class="card" data-name="password">
     <img src="img/ChatGPT Image Mar 23, 2026, 04_25_25 PM.png" alt="Password Checker">
     <h3>Password Checker</h3>
-    <p class="role">Click here to check your password strength</p>
-    <a href="password.html" class="btn2">Password Checker</a>
+    <p class="role">Check how strong your password really is</p>
+    <a href="password.html" class="btn2" onclick="logTool('Password Checker')">Password Checker</a>
   </div>
- 
-  <div class="card">
-    <img src="img/ChatGPT Image Mar 23, 2026, 04_42_37 PM.png" alt="Email Breach Checker">
+  <div class="card" data-name="email breach">
+    <img src="img/ChatGPT Image Mar 23, 2026, 04_42_37 PM.png" alt="Email Breach">
     <h3>Email Breach Checker</h3>
     <p class="role">Check if your email was exposed in data breaches</p>
-    <a href="EmailHunter.html" class="btn2">Email Breach</a>
+    <a href="EmailHunter.html" class="btn2" onclick="logTool('Email Breach Checker')">Email Breach</a>
   </div>
-  
- 
 </div>
- 
-<script>
-  function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
-  }
+
+<script type="module">
+  import { db, auth } from './firebase-config.js';
+  import { onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { ref, push }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    const area = document.getElementById('authArea');
+    if (user) {
+      const name = user.email.split('@')[0];
+      area.innerHTML = `<span style="color:#38bdf8;font-size:.85rem;">👋 ${name}</span>
+        <button style="background:none;border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:20px;padding:4px 12px;font-size:.8rem;cursor:pointer;margin-left:6px;" onclick="doLogout()">Logout</button>`;
+    } else {
+      area.innerHTML = `<a href="index.html" class="btn">Login</a>`;
+    }
+  });
+
+  window.doLogout  = () => signOut(auth).then(() => location.href='index.html');
+  window.toggleNav = () => document.getElementById('navLinks').classList.toggle('open');
+
+  window.logTool = async (toolName) => {
+    try {
+      await push(ref(db, 'toolLogs'), {
+        tool:      toolName,
+        user:      currentUser ? currentUser.email : 'anonymous',
+        timestamp: Date.now()
+      });
+    } catch(e) { console.log(e); }
+  };
+
+  window.filterCards = () => {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+      card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+    });
+  };
 </script>
 </body>
 </html>
- 
