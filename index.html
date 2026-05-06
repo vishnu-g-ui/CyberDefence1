@@ -5,15 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <title>CyberDefence</title>
+  <style>
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:999;justify-content:center;align-items:center;}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:#0d1626;border:1px solid rgba(56,189,248,0.2);border-radius:20px;padding:2.5rem;width:90%;max-width:380px;text-align:center;position:relative;}
+    .modal-box h2{margin-bottom:1.5rem;color:#38bdf8;font-size:1.4rem;}
+    .modal-box input{width:100%;padding:12px 16px;background:#060b14;border:1px solid rgba(56,189,248,0.2);border-radius:10px;color:white;font-size:0.95rem;margin-bottom:1rem;}
+    .modal-box input:focus{outline:none;border-color:#38bdf8;}
+    .modal-btn{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#00ff88);color:#060b14;font-weight:700;font-size:1rem;cursor:pointer;}
+    .modal-btn:hover{opacity:0.85;}
+    .modal-close{position:absolute;top:14px;right:18px;background:none;border:none;color:#64748b;font-size:1.4rem;cursor:pointer;}
+    .modal-toggle{margin-top:1rem;font-size:0.85rem;color:#64748b;}
+    .modal-toggle a{color:#38bdf8;cursor:pointer;}
+    .modal-msg{margin-top:0.8rem;font-size:0.85rem;min-height:20px;}
+    .modal-msg.err{color:#ef4444;}
+    .modal-msg.ok{color:#00ff88;}
+    .user-name{color:#38bdf8;font-size:0.85rem;}
+    .logout-btn{background:none;border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:20px;padding:4px 12px;font-size:0.8rem;cursor:pointer;margin-left:6px;}
+  </style>
 </head>
 <body>
  
-<!-- Background Video -->
 <video autoplay muted loop id="bg-video">
   <source src="./hacker.mp4" type="video/mp4">
 </video>
  
-<!-- Navbar -->
 <nav>
   <div class="logo">CyberDefence</div>
   <button class="nav-toggle" onclick="toggleNav()">☰</button>
@@ -24,19 +40,92 @@
     <li><a href="https://vishnu-profile.lovable.app">About</a></li>
     <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
   </ul>
-  <button class="btn">Login</button>
+  <div id="authArea" style="display:flex;align-items:center;gap:8px;">
+    <button class="btn" onclick="openModal()">Login</button>
+  </div>
 </nav>
  
-<!-- Hero -->
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 id="mTitle">🔐 Login</h2>
+    <input type="email"    id="mEmail" placeholder="Email"/>
+    <input type="password" id="mPass"  placeholder="Password"/>
+    <button class="modal-btn" id="mBtn">Login</button>
+    <p class="modal-msg"   id="mMsg"></p>
+    <p class="modal-toggle">
+      <span id="mToggleTxt">No account?</span>
+      <a id="mToggleLink" onclick="toggleMode()"> Sign Up</a>
+    </p>
+  </div>
+</div>
+ 
 <div class="maintext">
   <h1>Welcome to CyberDefence</h1>
   <a href="card.html" class="btn">Start</a>
 </div>
  
-<script>
-  function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
-  }
+<script type="module">
+  import { db, auth } from './firebase-config.js';
+  import {
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { ref, set, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+ 
+  let loginMode = true;
+ 
+  onAuthStateChanged(auth, user => {
+    const area = document.getElementById('authArea');
+    if (user) {
+      const name = user.email.split('@')[0];
+      area.innerHTML = `<span class="user-name">👋 ${name}</span>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>`;
+    } else {
+      area.innerHTML = `<button class="btn" onclick="openModal()">Login</button>`;
+    }
+  });
+ 
+  window.doLogout   = () => signOut(auth);
+  window.openModal  = () => document.getElementById('modal').classList.add('open');
+  window.closeModal = () => document.getElementById('modal').classList.remove('open');
+  window.toggleNav  = () => document.getElementById('navLinks').classList.toggle('open');
+ 
+  window.toggleMode = () => {
+    loginMode = !loginMode;
+    document.getElementById('mTitle').textContent      = loginMode ? '🔐 Login'    : '✏️ Sign Up';
+    document.getElementById('mBtn').textContent        = loginMode ? 'Login'       : 'Create Account';
+    document.getElementById('mToggleTxt').textContent  = loginMode ? 'No account?' : 'Have account?';
+    document.getElementById('mToggleLink').textContent = loginMode ? ' Sign Up'    : ' Login';
+    document.getElementById('mMsg').textContent        = '';
+  };
+ 
+  document.getElementById('mBtn').onclick = async () => {
+    const email = document.getElementById('mEmail').value.trim();
+    const pass  = document.getElementById('mPass').value;
+    const msg   = document.getElementById('mMsg');
+    msg.className = 'modal-msg'; msg.textContent = '';
+    if (!email || !pass) { msg.className='modal-msg err'; msg.textContent='Fill both fields.'; return; }
+    try {
+      if (loginMode) {
+        await signInWithEmailAndPassword(auth, email, pass);
+        msg.className='modal-msg ok'; msg.textContent='✅ Logged in!';
+      } else {
+        const c = await createUserWithEmailAndPassword(auth, email, pass);
+        // Save user to Realtime Database
+        await set(ref(db, 'users/' + c.user.uid), {
+          email, role: 'user', createdAt: Date.now()
+        });
+        msg.className='modal-msg ok'; msg.textContent='✅ Account created!';
+      }
+      setTimeout(window.closeModal, 1000);
+    } catch(e) {
+      msg.className='modal-msg err';
+      msg.textContent = e.message.replace('Firebase: ','').replace('(auth/','').replace(').','');
+    }
+  };
 </script>
 </body>
 </html>
