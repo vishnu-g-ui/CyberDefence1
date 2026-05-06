@@ -1,132 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Email Breach Checker</title>
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial;
-}
-
-body{
-    
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('img/tJfDsy74xZ08sfIIhFWJlUb0ImwClHmYgwLKrEYHreGxzvLVK31BkNS2Vwq235tPmJ9YByvMEqCWI3JVDFXYcoAtNXxGegdcpXr3U8dt0Ss.jpeg');
-  background-size: cover;
-  background-position: center;
-}
-
-
-.container{
-    text-align:center;
-    background:#1e293b;
-    padding:40px;
-    border-radius:15px;
-    width:350px;
-    box-shadow:0 0 20px rgba(0,255,150,0.2);
-}
-
-h1{
-    margin-bottom:10px;
-}
-
-p{
-    margin-bottom:20px;
-    color:#94a3b8;
-}
-
-.box{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-input{
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    outline:none;
-    font-size:14px;
-}
-
-button{
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#22c55e;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-button:hover{
-    background:#16a34a;
-}
-
-.result{
-    margin-top:20px;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.safe{
-    color:#22c55e;
-}
-
-.breach{
-    color:#ef4444;
-}
-
-.warning{
-    color:#facc15;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Breach Checker</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+                  url('img/tJfDsy74xZ08sfIIhFWJlUb0ImwClHmYgwLKrEYHreGxzvLVK31BkNS2Vwq235tPmJ9YByvMEqCWI3JVDFXYcoAtNXxGegdcpXr3U8dt0Ss.jpeg');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+ 
+    /* Email checker card */
+    .email-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+ 
+    .email-card {
+      text-align: center;
+      background: #1e293b;
+      padding: 36px 28px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 0 20px rgba(0, 255, 150, 0.2);
+    }
+ 
+    .email-card h1 {
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      margin-bottom: 10px;
+    }
+ 
+    .email-card p {
+      margin-bottom: 20px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+ 
+    .email-card .box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+ 
+    .email-card input {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+    }
+ 
+    .email-card button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+ 
+    .email-card button:hover { background: #16a34a; }
+ 
+    .result-email {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+ 
+    .safe    { color: #22c55e; }
+    .breach  { color: #ef4444; }
+    .warning { color: #facc15; }
+  </style>
 </head>
-<body id="Email-hunter">
-   <!-- Main body -->
-<div class="container">
+<body>
+ 
+<!-- Navbar -->
+<nav>
+  <div class="logo">CyberDefence</div>
+  <button class="nav-toggle" onclick="toggleNav()">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="card.html">Tools</a></li>
+    <li><a href="card.html">Attack Lab</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">About</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
+  </ul>
+  <button class="btn">Login</button>
+</nav>
+ 
+<!-- Email checker -->
+<div class="email-wrap">
+  <div class="email-card">
     <h1>🛡️ Email Breach Checker</h1>
     <p>Check if your email was exposed in data breaches</p>
     <div class="box">
-        <input type="email" id="email" placeholder="Enter your email">
-        <button id="checkBtn">Check</button>
+      <input type="email" id="email" placeholder="Enter your email">
+      <button id="checkBtn">Check</button>
     </div>
-    <div id="result" class="result"></div>
+    <div id="result" class="result-email"></div>
+  </div>
 </div>
+ 
 <script>
-document.getElementById("checkBtn").addEventListener("click", function(){
-
-    let email = document.getElementById("email").value;
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+ 
+  document.getElementById("checkBtn").addEventListener("click", function () {
+    let email  = document.getElementById("email").value;
     let result = document.getElementById("result");
-
-    if(email === ""){
-        result.innerText = "⚠️ Please enter an email";
-        result.className = "result warning";
-        return;
+ 
+    if (email === "") {
+      result.innerText = "⚠️ Please enter an email";
+      result.className = "result-email warning";
+      return;
     }
-
+ 
     let breachedEmails = ["hack@gmail.com", "test@123.com", "admin@breach.com"];
-
-    if(breachedEmails.includes(email.toLowerCase())){
-        result.innerHTML = "🔴 BREACHED!<br>This email was found in data leaks.<br>⚠️ Change password immediately!";
-        result.className = "result breach";
+ 
+    if (breachedEmails.includes(email.toLowerCase())) {
+      result.innerHTML = "🔴 BREACHED!<br>This email was found in data leaks.<br>⚠️ Change password immediately!";
+      result.className = "result-email breach";
+    } else {
+      result.innerHTML = "🟢 SAFE<br>No known data breaches found.";
+      result.className = "result-email safe";
     }
-    else{
-        result.innerHTML = "🟢 SAFE<br>No known data breaches found.";
-        result.className = "result safe";
-    }
-
-});
+  });
 </script>
-
 </body>
 </html>
+ 
