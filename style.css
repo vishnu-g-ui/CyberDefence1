@@ -39,8 +39,9 @@ nav {
 .logo {
   font-size: clamp(1.2rem, 4vw, 1.9rem);
   font-weight: 700;
-  color: #38bdf8;
+  color: darkgreen;
   letter-spacing: 1px;
+  text-shadow: 0 0 2px darkgreen;
 }
  
 /* Hamburger toggle (hidden on desktop) */
@@ -61,11 +62,10 @@ nav {
   display: flex;
   gap: 1.5rem;
   padding: 8px 16px;
+  border-radius: 20px;
   flex-wrap: wrap;
   justify-content: center;
-  border-radius: 20px;
   border-top: 2px solid #38bdf8;
-  
 }
  
 .nav-links li a {
