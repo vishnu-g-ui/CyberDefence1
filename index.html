@@ -7,27 +7,36 @@
   <title>CyberDefence</title>
 </head>
 <body>
-  <!-- Header -->
-   <video autoplay muted loop id="bg-video">
-      <source src="./hacker.mp4" type="video/mp4">
-  </video>
-   <nav>
-    <div class="logo">CyberDefence</div>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="card.html">Tools</a></li>
-      <li><a href="card.html">Attack Lab</a></li>
-      <li><a href="https://vishnu-profile.lovable.app">About</a></li>
-      <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
-    </ul>
-    <div class="btns"></div>
-      <button class="btn">Login</button>
-   </nav>
-
-   <!-- Main Text -->
-    <div class="maintext">
-      <h1>Welcome to CyberDefence</h1>
-     <a href="card.html" class="btn">Start</a>
-  </div>
+ 
+<!-- Background Video -->
+<video autoplay muted loop id="bg-video">
+  <source src="./hacker.mp4" type="video/mp4">
+</video>
+ 
+<!-- Navbar -->
+<nav>
+  <div class="logo">CyberDefence</div>
+  <button class="nav-toggle" onclick="toggleNav()">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="card.html">Tools</a></li>
+    <li><a href="card.html">Attack Lab</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">About</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
+  </ul>
+  <button class="btn">Login</button>
+</nav>
+ 
+<!-- Hero -->
+<div class="maintext">
+  <h1>Welcome to CyberDefence</h1>
+  <a href="card.html" class="btn">Start</a>
+</div>
+ 
+<script>
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+</script>
 </body>
 </html>
