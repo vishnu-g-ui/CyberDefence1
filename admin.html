@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberDefence – Admin</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#060b14;color:#e2e8f0;min-height:100vh;}
+    header{padding:1.2rem 5%;background:#0d1626;border-bottom:1px solid rgba(56,189,248,.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    header h1{font-size:1.4rem;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .logout-btn{background:none;border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.9rem;}
+    .login-section{display:flex;justify-content:center;align-items:center;min-height:100vh;}
+    .login-box{background:#0d1626;border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:2.5rem;width:90%;max-width:360px;text-align:center;}
+    .login-box h2{margin-bottom:1.5rem;color:#38bdf8;}
+    .login-box input{width:100%;padding:12px;background:#060b14;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:white;font-size:.95rem;margin-bottom:1rem;}
+    .login-box input:focus{outline:none;border-color:#38bdf8;}
+    .login-box button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#00ff88);color:#060b14;font-weight:700;font-size:1rem;cursor:pointer;}
+    .err{color:#ef4444;font-size:.85rem;margin-top:.5rem;}
+    .dashboard{padding:2rem 5%;}
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat-box{background:#0d1626;border:1px solid rgba(56,189,248,.15);border-radius:16px;padding:1.4rem;text-align:center;}
+    .stat-box .num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat-box .lbl{font-size:.8rem;color:#64748b;margin-top:4px;}
+    .tabs{display:flex;gap:.8rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;}
+    .tab{padding:8px 20px;border-radius:999px;border:1px solid rgba(56,189,248,.2);background:none;color:#64748b;cursor:pointer;font-size:.9rem;transition:.2s;}
+    .tab.active{background:rgba(56,189,248,.1);border-color:#38bdf8;color:#38bdf8;}
+    .refresh-btn{margin-left:auto;padding:7px 18px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#38bdf8;cursor:pointer;font-size:.85rem;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:.88rem;}
+    th{text-align:left;padding:10px 14px;background:#0d1626;color:#38bdf8;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(56,189,248,.1);}
+    td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;}
+    tr:hover td{background:rgba(56,189,248,.03);}
+    .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.75rem;font-weight:600;}
+    .badge.safe{background:rgba(0,255,136,.12);color:#00ff88;}
+    .badge.breach{background:rgba(239,68,68,.12);color:#ef4444;}
+    .badge.weak{background:rgba(239,68,68,.12);color:#ef4444;}
+    .badge.medium{background:rgba(250,204,21,.12);color:#facc15;}
+    .badge.strong{background:rgba(0,255,136,.12);color:#00ff88;}
+    .hidden{display:none;}
+    .empty{text-align:center;padding:2rem;color:#64748b;}
+  </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-section">
+  <div class="login-box">
+    <h2>🔐 Admin Login</h2>
+    <input type="email"    id="adminEmail" placeholder="Your email"/>
+    <input type="password" id="adminPass"  placeholder="Password"/>
+    <button onclick="adminLogin()">Login</button>
+    <p class="err" id="loginErr"></p>
+  </div>
+</div>
+
+<div id="dashSection" class="hidden">
+  <header>
+    <h1>⚡ CyberDefence Admin</h1>
+    <button class="logout-btn" onclick="adminLogout()">Logout</button>
+  </header>
+  <div class="dashboard">
+    <div class="stats-row">
+      <div class="stat-box"><div class="num" id="cntUsers">0</div><div class="lbl">Users</div></div>
+      <div class="stat-box"><div class="num" id="cntPhish">0</div><div class="lbl">Phish Checks</div></div>
+      <div class="stat-box"><div class="num" id="cntPass">0</div><div class="lbl">Password Checks</div></div>
+      <div class="stat-box"><div class="num" id="cntEmail">0</div><div class="lbl">Email Checks</div></div>
+      <div class="stat-box"><div class="num" id="cntTools">0</div><div class="lbl">Tool Clicks</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('users',this)">👥 Users</button>
+      <button class="tab"        onclick="showTab('phish',this)">🎣 Phish</button>
+      <button class="tab"        onclick="showTab('pass',this)">🔑 Passwords</button>
+      <button class="tab"        onclick="showTab('email',this)">📧 Emails</button>
+      <button class="tab"        onclick="showTab('tools',this)">🛠 Tool Logs</button>
+      <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+    <div class="table-wrap" id="tabUsers">
+      <table><thead><tr><th>Email</th><th>Role</th><th>Joined</th></tr></thead><tbody id="bodyUsers"></tbody></table>
+    </div>
+    <div class="table-wrap hidden" id="tabPhish">
+      <table><thead><tr><th>URL</th><th>Verdict</th><th>User</th><th>Time</th></tr></thead><tbody id="bodyPhish"></tbody></table>
+    </div>
+    <div class="table-wrap hidden" id="tabPass">
+      <table><thead><tr><th>Strength</th><th>Score</th><th>Length</th><th>User</th><th>Time</th></tr></thead><tbody id="bodyPass"></tbody></table>
+    </div>
+    <div class="table-wrap hidden" id="tabEmail">
+      <table><thead><tr><th>Email</th><th>Result</th><th>User</th><th>Time</th></tr></thead><tbody id="bodyEmail"></tbody></table>
+    </div>
+    <div class="table-wrap hidden" id="tabTools">
+      <table><thead><tr><th>Tool</th><th>User</th><th>Time</th></tr></thead><tbody id="bodyTools"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { signInWithEmailAndPassword, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { ref, get }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const fmt = ts => ts ? new Date(ts).toLocaleString() : '—';
+  const trunc = (s,n=45) => s&&s.length>n ? s.slice(0,n)+'…' : (s||'—');
+
+  window.adminLogin = async () => {
+    const email = document.getElementById('adminEmail').value.trim();
+    const pass  = document.getElementById('adminPass').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch(e) {
+      document.getElementById('loginErr').textContent = 'Invalid credentials.';
+    }
+  };
+
+  window.adminLogout = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashSection').classList.remove('hidden');
+      loadAll();
+    } else {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('dashSection').classList.add('hidden');
+    }
+  });
+
+  window.loadAll = async () => {
+    // Users
+    const uSnap = await get(ref(db,'users'));
+    const users = uSnap.val() || {};
+    const uArr  = Object.values(users);
+    document.getElementById('cntUsers').textContent = uArr.length;
+    document.getElementById('bodyUsers').innerHTML  = uArr.length
+      ? uArr.map(u=>`<tr><td>${u.email}</td><td>${u.role||'user'}</td><td>${fmt(u.createdAt)}</td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">No users yet</td></tr>';
+
+    // Phish
+    const pSnap = await get(ref(db,'phishChecks'));
+    const pArr  = Object.values(pSnap.val()||{}).reverse();
+    document.getElementById('cntPhish').textContent = pArr.length;
+    document.getElementById('bodyPhish').innerHTML  = pArr.length
+      ? pArr.map(x=>`<tr>
+          <td title="${x.url}">${trunc(x.url)}</td>
+          <td><span class="badge ${x.isSafe?'safe':'breach'}">${x.verdict}</span></td>
+          <td>${x.user}</td><td>${fmt(x.timestamp)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" class="empty">No checks yet</td></tr>';
+
+    // Password
+    const pwSnap = await get(ref(db,'passwordChecks'));
+    const pwArr  = Object.values(pwSnap.val()||{}).reverse();
+    document.getElementById('cntPass').textContent = pwArr.length;
+    document.getElementById('bodyPass').innerHTML  = pwArr.length
+      ? pwArr.map(x=>`<tr>
+          <td><span class="badge ${x.strength.toLowerCase()}">${x.strength}</span></td>
+          <td>${x.score}/5</td><td>${x.length} chars</td>
+          <td>${x.user}</td><td>${fmt(x.timestamp)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="5" class="empty">No checks yet</td></tr>';
+
+    // Email
+    const eSnap = await get(ref(db,'emailChecks'));
+    const eArr  = Object.values(eSnap.val()||{}).reverse();
+    document.getElementById('cntEmail').textContent = eArr.length;
+    document.getElementById('bodyEmail').innerHTML  = eArr.length
+      ? eArr.map(x=>`<tr>
+          <td>${x.email}</td>
+          <td><span class="badge ${x.isBreached?'breach':'safe'}">${x.isBreached?'BREACHED':'SAFE'}</span></td>
+          <td>${x.user}</td><td>${fmt(x.timestamp)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" class="empty">No checks yet</td></tr>';
+
+    // Tool logs
+    const tSnap = await get(ref(db,'toolLogs'));
+    const tArr  = Object.values(tSnap.val()||{}).reverse();
+    document.getElementById('cntTools').textContent = tArr.length;
+    document.getElementById('bodyTools').innerHTML  = tArr.length
+      ? tArr.map(x=>`<tr><td>${x.tool}</td><td>${x.user}</td><td>${fmt(x.timestamp)}</td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">No logs yet</td></tr>';
+  };
+
+  window.showTab = (name, btn) => {
+    ['Users','Phish','Pass','Email','Tools'].forEach(t => {
+      document.getElementById('tab'+t).classList.add('hidden');
+    });
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab'+name[0].toUpperCase()+name.slice(1)).classList.remove('hidden');
+    btn.classList.add('active');
+  };
+</script>
+</body>
+</html>
