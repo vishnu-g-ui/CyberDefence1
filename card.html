@@ -1,62 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>CyberDefence</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>CyberDefence</title>
 </head>
 <body>
-    <!-- Main header -->
+ 
+<!-- Navbar -->
 <nav>
-    <div class="logo">CyberDefence</div>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="card.html">Tools</a></li>
-      <li><a href="card.html">Attack Lab</a></li>
-      <li><a href="https://vishnu-profile.lovable.app">About</a></li>
-      <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
-    </ul>
-    <div class="btns"></div>
-      <button class="btn">Login</button>
-   </nav>
-
-   <!-- Main search -->
-    <div class="container">
-        <form action="">
-            <input type="text" placeholder="search here..." name="q">
-            <a href="" class="btn1">Search</a>
-        </form>
-    </div>
-
-    <!-- Main card section -->
-    <div class="card-container">
-    <div class="card">
-    <img src="img/ChatGPT Image Mar 8, 2026, 07_41_10 PM.png" alt="profile">
+  <div class="logo">CyberDefence</div>
+  <button class="nav-toggle" onclick="toggleNav()">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="card.html">Tools</a></li>
+    <li><a href="card.html">Attack Lab</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">About</a></li>
+    <li><a href="https://vishnu-profile.lovable.app">Contact</a></li>
+  </ul>
+  <button class="btn">Login</button>
+</nav>
+ 
+<!-- Search -->
+<div class="container">
+  <form>
+    <input type="text" placeholder="Search here..." name="q">
+    <a href="" class="btn1">Search</a>
+  </form>
+</div>
+ 
+<!-- Cards -->
+<div class="card-container">
+ 
+  <div class="card">
+    <img src="img/ChatGPT Image Mar 8, 2026, 07_41_10 PM.png" alt="Phishing Hunter">
     <h3>Phishing Hunter</h3>
     <p class="role">Click here to check whether the link is valid or not</p>
-    <a href="./phish.html" class="btn2">phish Checker</a>
+    <a href="./phish.html" class="btn2">Phish Checker</a>
   </div>
-
-
-  <div class="card-container">
-    <div class="card">
-    <img src="img/ChatGPT Image Mar 23, 2026, 04_25_25 PM.png" alt="profile">
+ 
+  <div class="card">
+    <img src="img/ChatGPT Image Mar 23, 2026, 04_25_25 PM.png" alt="Password Checker">
     <h3>Password Checker</h3>
     <p class="role">Click here to check your password strength</p>
     <a href="password.html" class="btn2">Password Checker</a>
   </div>
-
-
-  <div class="card-container">
-    <div class="card">
-    <img src="img/ChatGPT Image Mar 23, 2026, 04_42_37 PM.png" alt="profile">
-    <h3> Email Breach Checker</h3>
+ 
+  <div class="card">
+    <img src="img/ChatGPT Image Mar 23, 2026, 04_42_37 PM.png" alt="Email Breach Checker">
+    <h3>Email Breach Checker</h3>
     <p class="role">Check if your email was exposed in data breaches</p>
     <a href="EmailHunter.html" class="btn2">Email Breach</a>
   </div>
-
+ 
 </div>
-</div>
+ 
+<script>
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+</script>
 </body>
 </html>
+ 
