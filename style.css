@@ -60,11 +60,12 @@ nav {
   list-style: none;
   display: flex;
   gap: 1.5rem;
-  border: 1px solid #38bdf8;
   padding: 8px 16px;
-  border-radius: 25px;
   flex-wrap: wrap;
   justify-content: center;
+  border-radius: 20px;
+  border-top: 2px solid #38bdf8;
+  
 }
  
 .nav-links li a {
@@ -79,6 +80,9 @@ nav {
 .nav-links li a:hover {
   color: #38bdf8;
   text-shadow: 0 0 10px #38bdf8;
+  border-bottom: 2px solid #38bdf8;
+  border-radius: 15px;
+  padding: 5px;
 }
  
 .btn {
