@@ -33,19 +33,15 @@
     .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 1.8rem; }
 
     .engine-badges {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
+      display: flex; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
     }
     .engine-badge {
-      font-size: 0.7rem;
-      padding: 3px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(56,189,248,0.2);
+      font-size: 0.72rem; padding: 4px 12px;
+      border-radius: 999px; border: 1px solid rgba(56,189,248,0.2);
       color: #64748b;
     }
+    .engine-badge.active { border-color: #38bdf8; color: #38bdf8; }
 
     .input-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .input-row input {
@@ -72,11 +68,11 @@
     .scan-steps { margin: 0.8rem 0; text-align: left; }
     .scan-step {
       display: flex; align-items: center; gap: 8px;
-      font-size: 0.82rem; color: #64748b;
-      padding: 4px 0; transition: color 0.3s;
+      font-size: 0.82rem; color: #475569;
+      padding: 5px 0; transition: color 0.3s;
     }
-    .scan-step.done  { color: #00ff88; }
-    .scan-step.active{ color: #38bdf8; }
+    .scan-step.active { color: #38bdf8; }
+    .scan-step.done   { color: #00ff88; }
     .scan-bar {
       height: 3px;
       background: linear-gradient(90deg,#38bdf8,#00ff88,#38bdf8);
@@ -91,13 +87,13 @@
       border-radius: 16px; display: none; text-align: left;
       animation: fadeUp 0.4s ease;
     }
-    .result-box.show { display: block; }
+    .result-box.show  { display: block; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     .result-box.safe    { background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.3); }
     .result-box.danger  { background: rgba(239,68,68,0.07);  border: 1px solid rgba(239,68,68,0.3); }
     .result-box.warning { background: rgba(250,204,21,0.07); border: 1px solid rgba(250,204,21,0.3); }
 
-    .result-source { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 0.5rem; }
+    .result-source  { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 0.5rem; }
     .safe    .result-source { color: #00ff88; }
     .danger  .result-source { color: #ef4444; }
     .warning .result-source { color: #facc15; }
@@ -107,21 +103,34 @@
     .danger  .result-verdict { color: #ef4444; }
     .warning .result-verdict { color: #facc15; }
 
-    /* VirusTotal engine results */
+    /* VirusTotal engine grid */
     .vt-summary {
-      display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 0.8rem; margin-bottom: 1rem;
     }
     .vt-box {
-      flex: 1; min-width: 80px;
       background: rgba(0,0,0,0.3);
-      border-radius: 10px; padding: 0.7rem;
+      border-radius: 12px; padding: 0.8rem;
       text-align: center;
     }
-    .vt-box .vt-num { font-size: 1.4rem; font-weight: 800; }
-    .vt-box .vt-lbl { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+    .vt-box .vt-num { font-size: 1.5rem; font-weight: 800; }
+    .vt-box .vt-lbl { font-size: 0.68rem; color: #64748b; margin-top: 2px; }
     .vt-box.malicious .vt-num { color: #ef4444; }
+    .vt-box.suspicious .vt-num{ color: #facc15; }
     .vt-box.clean     .vt-num { color: #00ff88; }
     .vt-box.total     .vt-num { color: #38bdf8; }
+
+    /* Progress bar for malicious ratio */
+    .vt-ratio-bar {
+      height: 8px; border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 1rem; overflow: hidden;
+    }
+    .vt-ratio-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.8s ease;
+    }
 
     .reasons { list-style: none; padding: 0; margin: 0; }
     .reasons li {
@@ -137,12 +146,16 @@
     .db-stat  { text-align: center; font-size: 0.78rem; color: #64748b; }
     .db-stat span { display: block; font-size: 1rem; font-weight: 700; color: #38bdf8; }
 
-    /* Rate limit notice */
-    .rate-notice {
-      margin-top: 1rem; font-size: 0.78rem; color: #475569;
-      background: rgba(255,255,255,0.03);
-      border-radius: 8px; padding: 8px 12px;
+    .rate-notice { margin-top: 1rem; font-size: 0.75rem; color: #334155; }
+
+    /* Error box */
+    .error-box {
+      margin-top: 1.5rem; padding: 1.2rem;
+      border-radius: 14px; background: rgba(250,204,21,0.07);
+      border: 1px solid rgba(250,204,21,0.3);
+      color: #facc15; font-size: 0.88rem; display: none;
     }
+    .error-box.show { display: block; }
   </style>
 </head>
 <body>
@@ -163,36 +176,38 @@
 <div class="phish-wrap">
   <div class="phish-card">
     <h2>🎣 Phishing Detector</h2>
-    <p class="subtitle">Powered by VirusTotal • 90+ Security Engines • Live Database</p>
+    <p class="subtitle">Real-time scanning powered by 90+ security engines</p>
 
     <div class="engine-badges">
-      <span class="engine-badge">🔴 VirusTotal</span>
-      <span class="engine-badge">🛡 Firebase DB</span>
-      <span class="engine-badge">🧠 Smart Logic</span>
+      <span class="engine-badge active">🔴 VirusTotal</span>
+      <span class="engine-badge active">🛡 CyberDefence DB</span>
     </div>
 
     <div class="input-row">
       <input type="text" id="urlInput" placeholder="https://example.com"/>
-      <button class="check-btn" id="checkBtn" onclick="checkURL()">Scan</button>
+      <button class="check-btn" id="checkBtn" onclick="checkURL()">Scan Now</button>
     </div>
 
     <!-- Scanning steps -->
     <div class="scanning" id="scanning">
       <div class="scan-steps">
         <div class="scan-step" id="step1">⬜ Checking CyberDefence database...</div>
-        <div class="scan-step" id="step2">⬜ Submitting to VirusTotal...</div>
-        <div class="scan-step" id="step3">⬜ Scanning with 90+ engines...</div>
-        <div class="scan-step" id="step4">⬜ Analysing results...</div>
+        <div class="scan-step" id="step2">⬜ Submitting URL to VirusTotal...</div>
+        <div class="scan-step" id="step3">⬜ Waiting for 90+ engines to scan...</div>
+        <div class="scan-step" id="step4">⬜ Reading results...</div>
       </div>
       <div class="scan-bar"></div>
     </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox"></div>
 
     <!-- Result -->
     <div class="result-box" id="resultBox">
       <div class="result-source"  id="resultSource"></div>
       <div class="result-verdict" id="resultVerdict"></div>
-      <div class="vt-summary"     id="vtSummary" style="display:none;"></div>
-      <ul class="reasons"         id="reasons"></ul>
+      <div id="vtSummary"></div>
+      <ul class="reasons" id="reasons"></ul>
     </div>
 
     <!-- Stats -->
@@ -202,7 +217,7 @@
       <div class="db-stat"><span id="statChecks">—</span>Total Scans</div>
     </div>
 
-    <div class="rate-notice">⚡ VirusTotal free plan: 4 scans/min · 500/day</div>
+    <div class="rate-notice">⚡ VirusTotal free: 4 scans/min · 500/day</div>
   </div>
 </div>
 
@@ -213,18 +228,15 @@
   import { ref, get, push, set }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // ⚠️ Store API key in Firebase so it's not visible in GitHub
-  // Go to Firebase Realtime DB → add:  config/vtApiKey = "your_key"
-  const VT_KEY_PATH = 'config/vtApiKey';
-  let VT_API_KEY    = null;
-  let currentUser   = null;
+  let currentUser = null;
+  let VT_API_KEY  = null;
 
-  // Load API key from Firebase (hidden from GitHub)
+  // Load API key from Firebase
   async function loadApiKey() {
     try {
-      const snap = await get(ref(db, VT_KEY_PATH));
+      const snap = await get(ref(db,'config/vtApiKey'));
       if (snap.exists()) VT_API_KEY = snap.val();
-    } catch(e) { console.log('Could not load API key'); }
+    } catch(e) {}
   }
   loadApiKey();
 
@@ -241,7 +253,7 @@
   window.doLogout  = () => signOut(auth).then(() => location.href='index.html');
   window.toggleNav = () => document.getElementById('navLinks').classList.toggle('open');
 
-  // Load stats
+  // Stats
   async function loadStats() {
     try {
       const [pSnap, sSnap, cSnap] = await Promise.all([
@@ -263,66 +275,82 @@
     } catch { return url.toLowerCase().trim(); }
   }
 
-  function setStep(id, state) {
+  function step(id, state) {
     const el = document.getElementById(id);
-    if (!el) return;
-    if (state === 'done')   { el.textContent = '✅ ' + el.textContent.slice(2); el.className = 'scan-step done'; }
-    if (state === 'active') { el.className = 'scan-step active'; }
+    const text = el.textContent.slice(2);
+    if (state === 'active') { el.className='scan-step active'; el.textContent='🔄 '+text; }
+    if (state === 'done')   { el.className='scan-step done';   el.textContent='✅ '+text; }
+    if (state === 'fail')   { el.className='scan-step';        el.textContent='❌ '+text; }
   }
 
-  // ── VirusTotal scan
-  async function scanWithVirusTotal(url) {
-    if (!VT_API_KEY) return null;
-    try {
-      // Submit URL
-      const submitRes = await fetch('https://www.virustotal.com/api/v3/urls', {
-        method: 'POST',
-        headers: { 'x-apikey': VT_API_KEY, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'url=' + encodeURIComponent(url)
-      });
-      const submitData = await submitRes.json();
-      const analysisId = submitData?.data?.id;
-      if (!analysisId) return null;
-
-      // Wait 3 seconds for analysis
-      await new Promise(r => setTimeout(r, 3000));
-
-      // Get results
-      const resultRes = await fetch(`https://www.virustotal.com/api/v3/analyses/${analysisId}`, {
-        headers: { 'x-apikey': VT_API_KEY }
-      });
-      const resultData = await resultRes.json();
-      return resultData?.data?.attributes?.stats || null;
-    } catch(e) { return null; }
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.classList.add('show');
   }
 
-  // ── Main check
+  // VirusTotal scan
+  async function scanVT(url) {
+    // Submit URL
+    const submitRes = await fetch('https://www.virustotal.com/api/v3/urls', {
+      method: 'POST',
+      headers: {
+        'x-apikey': VT_API_KEY,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'url=' + encodeURIComponent(url)
+    });
+
+    if (!submitRes.ok) throw new Error('VirusTotal submit failed: ' + submitRes.status);
+    const submitData = await submitRes.json();
+    const analysisId = submitData?.data?.id;
+    if (!analysisId) throw new Error('No analysis ID returned');
+
+    // Wait for engines to scan
+    await new Promise(r => setTimeout(r, 4000));
+
+    // Get results
+    const resultRes = await fetch(`https://www.virustotal.com/api/v3/analyses/${analysisId}`, {
+      headers: { 'x-apikey': VT_API_KEY }
+    });
+    if (!resultRes.ok) throw new Error('VirusTotal result failed: ' + resultRes.status);
+    const resultData = await resultRes.json();
+    return resultData?.data?.attributes?.stats;
+  }
+
   window.checkURL = async () => {
     const url      = document.getElementById('urlInput').value.trim();
     const btn      = document.getElementById('checkBtn');
     const scanning = document.getElementById('scanning');
     const box      = document.getElementById('resultBox');
-    const vtSum    = document.getElementById('vtSummary');
-    if (!url) return;
+    const errBox   = document.getElementById('errorBox');
 
-    // Reset UI
+    if (!url) { showError('⚠️ Please enter a URL to scan'); return; }
+
+    // Reset
     btn.disabled = true;
     box.className = 'result-box';
-    vtSum.style.display = 'none';
-    vtSum.innerHTML = '';
-    scanning.classList.add('show');
+    errBox.classList.remove('show');
+    document.getElementById('vtSummary').innerHTML = '';
+    document.getElementById('reasons').innerHTML  = '';
     ['step1','step2','step3','step4'].forEach(s => {
       const el = document.getElementById(s);
       el.className = 'scan-step';
+      el.textContent = '⬜ ' + el.textContent.slice(2);
     });
+    scanning.classList.add('show');
 
     const normalized = normalizeURL(url);
-    let verdict, type, reasons=[], source, vtStats=null;
+    let verdict, type, reasons=[], source;
 
-    // ── STEP 1: Firebase known phishing DB
-    setStep('step1','active');
     try {
-      const pSnap = await get(ref(db,'phishingDB/knownPhishing'));
+      // ── STEP 1: CyberDefence Firebase DB
+      step('step1','active');
+      const [pSnap, sSnap] = await Promise.all([
+        get(ref(db,'phishingDB/knownPhishing')),
+        get(ref(db,'phishingDB/knownSafe'))
+      ]);
+
       if (pSnap.exists()) {
         const match = Object.values(pSnap.val()).find(e => normalizeURL(e.url) === normalized);
         if (match) {
@@ -330,128 +358,114 @@
           type    = 'danger';
           source  = '⚠ CyberDefence Phishing Database';
           reasons = [
-            `Category: ${match.category || 'Phishing Site'}`,
-            `Reported: ${new Date(match.addedAt).toLocaleDateString()}`,
-            'Do NOT enter any personal info on this site',
-            'Do NOT download anything from this site'
+            `Reported as: ${match.category}`,
+            `Date added: ${new Date(match.addedAt).toLocaleDateString()}`,
+            'Do NOT visit or enter any info on this site'
           ];
         }
       }
-
-      // Check safe DB
-      if (!verdict) {
-        const sSnap = await get(ref(db,'phishingDB/knownSafe'));
-        if (sSnap.exists()) {
-          const match = Object.values(sSnap.val()).find(e => normalizeURL(e.url) === normalized);
-          if (match) {
-            verdict = '✅ Verified Safe';
-            type    = 'safe';
-            source  = '✓ CyberDefence Safe Database';
-            reasons = [
-              `Category: ${match.category || 'Trusted Website'}`,
-              'Verified in our safe URL list',
-              url.startsWith('https') ? '✅ Using HTTPS' : '⚠ Not using HTTPS'
-            ];
-          }
+      if (!verdict && sSnap.exists()) {
+        const match = Object.values(sSnap.val()).find(e => normalizeURL(e.url) === normalized);
+        if (match) {
+          verdict = '✅ Verified Safe';
+          type    = 'safe';
+          source  = '✓ CyberDefence Safe Database';
+          reasons = [
+            `Category: ${match.category}`,
+            'This URL is verified in our safe list'
+          ];
         }
       }
-    } catch(e) {}
-    setStep('step1','done');
+      step('step1','done');
 
-    // ── STEP 2 & 3: VirusTotal (only if not found in DB)
-    if (!verdict) {
-      setStep('step2','active');
-      if (!VT_API_KEY) {
-        setStep('step2','done');
-        setStep('step3','done');
-      } else {
+      // ── STEP 2, 3, 4: VirusTotal
+      if (!verdict) {
+        if (!VT_API_KEY) {
+          scanning.classList.remove('show');
+          btn.disabled = false;
+          showError('⚠️ VirusTotal API key not configured. Go to phish-admin.html to add your key.');
+          return;
+        }
+
+        step('step2','active');
         await new Promise(r => setTimeout(r, 300));
-        setStep('step2','done');
-        setStep('step3','active');
-        vtStats = await scanWithVirusTotal(url);
-        setStep('step3','done');
-      }
-    } else {
-      setStep('step2','done');
-      setStep('step3','done');
-    }
+        step('step2','done');
 
-    // ── STEP 4: Analyse results
-    setStep('step4','active');
+        step('step3','active');
+        const stats = await scanVT(url);
+        step('step3','done');
 
-    if (!verdict) {
-      if (vtStats) {
-        // Use VirusTotal results
-        source = '🔴 VirusTotal — 90+ Security Engines';
-        const malicious  = vtStats.malicious  || 0;
-        const suspicious = vtStats.suspicious || 0;
-        const harmless   = vtStats.harmless   || 0;
-        const undetected = vtStats.undetected || 0;
+        step('step4','active');
+        await new Promise(r => setTimeout(r, 300));
+
+        const malicious  = stats?.malicious  || 0;
+        const suspicious = stats?.suspicious || 0;
+        const harmless   = stats?.harmless   || 0;
+        const undetected = stats?.undetected || 0;
         const total      = malicious + suspicious + harmless + undetected;
+        const flagged    = malicious + suspicious;
+        const ratio      = total > 0 ? Math.round((malicious/total)*100) : 0;
 
-        vtSum.innerHTML = `
-          <div class="vt-box malicious"><div class="vt-num">${malicious}</div><div class="vt-lbl">Malicious</div></div>
-          <div class="vt-box"><div class="vt-num" style="color:#facc15">${suspicious}</div><div class="vt-lbl">Suspicious</div></div>
-          <div class="vt-box clean"><div class="vt-num">${harmless}</div><div class="vt-lbl">Clean</div></div>
-          <div class="vt-box total"><div class="vt-num">${total}</div><div class="vt-lbl">Engines</div></div>`;
-        vtSum.style.display = 'flex';
+        // VirusTotal summary boxes
+        document.getElementById('vtSummary').innerHTML = `
+          <div class="vt-summary">
+            <div class="vt-box malicious"><div class="vt-num">${malicious}</div><div class="vt-lbl">Malicious</div></div>
+            <div class="vt-box suspicious"><div class="vt-num">${suspicious}</div><div class="vt-lbl">Suspicious</div></div>
+            <div class="vt-box clean"><div class="vt-num">${harmless}</div><div class="vt-lbl">Clean</div></div>
+            <div class="vt-box total"><div class="vt-num">${total}</div><div class="vt-lbl">Engines</div></div>
+          </div>
+          <div class="vt-ratio-bar">
+            <div class="vt-ratio-fill" style="width:${ratio}%;background:${malicious>=3?'#ef4444':malicious>0?'#facc15':'#00ff88'}"></div>
+          </div>`;
+
+        source = `🔬 VirusTotal — ${total} Security Engines`;
 
         if (malicious >= 3) {
-          verdict = `🔴 DANGEROUS — ${malicious} engines flagged this!`;
+          verdict = `🔴 DANGEROUS — ${malicious} engines detected malware!`;
           type    = 'danger';
           reasons = [
-            `${malicious} out of ${total} engines detected malware/phishing`,
-            suspicious > 0 ? `${suspicious} engines flagged as suspicious` : null,
-            'Do NOT visit this website',
-            'Do NOT enter passwords or personal data',
-            url.startsWith('http://') ? '⚠ Also not using HTTPS' : null
+            `${malicious} out of ${total} engines flagged this URL`,
+            suspicious > 0 ? `${suspicious} additional engines flagged as suspicious` : null,
+            'This site is confirmed dangerous',
+            'Do NOT visit, login, or download anything from it',
+            'Report it to your internet provider'
           ].filter(Boolean);
         } else if (malicious > 0 || suspicious >= 2) {
-          verdict = `⚠️ SUSPICIOUS — ${malicious + suspicious} engines flagged this`;
+          verdict = `⚠️ SUSPICIOUS — ${flagged} engines flagged this`;
           type    = 'warning';
           reasons = [
-            `${malicious} engines detected issues, ${suspicious} flagged suspicious`,
-            'Proceed with extreme caution',
+            `${malicious} engines detected malware, ${suspicious} flagged suspicious`,
             `${harmless} engines found it clean`,
-            url.startsWith('http://') ? '⚠ Not using HTTPS' : '✅ Using HTTPS'
+            'Be very careful with this URL',
+            'Do not enter passwords or personal info'
+          ];
+        } else if (suspicious === 1) {
+          verdict = `⚠️ LOW RISK — 1 engine flagged suspicious`;
+          type    = 'warning';
+          reasons = [
+            '1 engine flagged this as suspicious',
+            `${harmless} engines found it clean`,
+            'Proceed with caution'
           ];
         } else {
-          verdict = `✅ Clean — ${total} engines checked, none flagged`;
+          verdict = `✅ SAFE — ${total} engines checked, none flagged`;
           type    = 'safe';
           reasons = [
-            `${harmless} engines confirmed safe`,
-            `${undetected} engines had no data`,
-            url.startsWith('https://') ? '✅ Using HTTPS (secure)' : '⚠ Not using HTTPS'
-          ];
+            `${harmless} engines confirmed this URL is safe`,
+            undetected > 0 ? `${undetected} engines had no data on this URL` : null,
+            'No threats detected by any engine'
+          ].filter(Boolean);
         }
-
-      } else {
-        // Fallback: Smart JS logic
-        source = '🧠 Smart Detection Engine';
-        const suspiciousWords = ['-login','-verify','-bank','-secure','-account','-update','-confirm','-paypal','-amazon','-apple','-microsoft','signin','password'];
-        const dangerousExt   = ['.tk','.ml','.ga','.cf','.gq','.xyz','.top','.click','.download'];
-        let score = 0;
-
-        if (!url.startsWith('http'))   { score+=3; reasons.push('Missing http/https'); }
-        if (url.startsWith('http://')) { score+=2; reasons.push('Not using HTTPS (insecure)'); }
-        else reasons.push('✅ Using HTTPS');
-        if (url.length > 75)           { score++;  reasons.push('URL is very long'); }
-        if (url.split('.').length > 5) { score++;  reasons.push('Too many subdomains'); }
-        if (url.includes('@'))         { score+=2; reasons.push('Contains @ symbol'); }
-        if (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(url)) { score+=3; reasons.push('Uses raw IP address'); }
-        for (let w of suspiciousWords) if (url.toLowerCase().includes(w)) { score++; reasons.push(`Suspicious keyword: "${w}"`); }
-        for (let e of dangerousExt)    if (url.toLowerCase().includes(e)) { score+=2; reasons.push(`Risky domain extension: ${e}`); }
-        if (reasons.length === 1) reasons.push('No suspicious patterns found');
-
-        if (!url.startsWith('http')) { verdict='⚠️ Invalid URL';      type='warning'; }
-        else if (score >= 4)         { verdict='🔴 Likely Phishing!'; type='danger';  }
-        else if (score >= 2)         { verdict='⚠️ Suspicious URL';   type='warning'; }
-        else                         { verdict='✅ Looks Safe';        type='safe';    }
+        step('step4','done');
       }
+
+    } catch(e) {
+      scanning.classList.remove('show');
+      btn.disabled = false;
+      showError(`⚠️ Scan failed: ${e.message}. Check your internet connection or try again in a minute (rate limit: 4/min).`);
+      return;
     }
 
-    setStep('step4','done');
-    await new Promise(r => setTimeout(r, 300));
     scanning.classList.remove('show');
     btn.disabled = false;
 
@@ -464,9 +478,8 @@
     try {
       await push(ref(db,'phishChecks'), {
         url, verdict, type,
-        vtMalicious: vtStats?.malicious || 0,
-        user:        currentUser?.email || 'anonymous',
-        timestamp:   Date.now()
+        user:      currentUser?.email || 'anonymous',
+        timestamp: Date.now()
       });
       const cSnap = await get(ref(db,'phishingDB/totalScans'));
       await set(ref(db,'phishingDB/totalScans'), (cSnap.exists() ? cSnap.val() : 0) + 1);
