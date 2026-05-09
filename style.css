@@ -11,7 +11,7 @@ body {
 }
 .logo img {
   width: 180px;
-  height: auto;
+  height: 80px;
   object-fit: contain;
 }
 #bg-video {
