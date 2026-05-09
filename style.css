@@ -9,7 +9,13 @@ body {
   background: #0f172a;
   color: white;
 }
- 
+.logo img {
+
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+
+}
 #bg-video {
   position: fixed;
   top: 0;
