@@ -31,139 +31,80 @@
     }
     .phish-card h2 { font-size: clamp(1.3rem,4vw,1.8rem); margin-bottom: 0.3rem; color: white; }
     .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 1.8rem; }
-
-    .engine-badges {
-      display: flex; justify-content: center;
-      gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
-    }
-    .engine-badge {
-      font-size: 0.72rem; padding: 4px 12px;
-      border-radius: 999px; border: 1px solid rgba(56,189,248,0.2);
-      color: #64748b;
-    }
-    .engine-badge.active { border-color: #38bdf8; color: #38bdf8; }
-
-    .input-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .engine-badges { display:flex; justify-content:center; gap:.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .engine-badge { font-size:.72rem; padding:4px 12px; border-radius:999px; border:1px solid rgba(56,189,248,0.2); color:#64748b; }
+    .engine-badge.active { border-color:#38bdf8; color:#38bdf8; }
+    .input-row { display:flex; gap:.6rem; flex-wrap:wrap; }
     .input-row input {
-      flex: 1 1 200px; padding: 13px 16px;
-      background: #060b14;
-      border: 1px solid rgba(56,189,248,0.25);
-      border-radius: 12px; color: white; font-size: 0.95rem;
-      transition: border-color 0.2s;
+      flex:1 1 200px; padding:13px 16px; background:#060b14;
+      border:1px solid rgba(56,189,248,0.25); border-radius:12px;
+      color:white; font-size:.95rem; transition:border-color .2s;
     }
-    .input-row input:focus { outline: none; border-color: #38bdf8; }
+    .input-row input:focus { outline:none; border-color:#38bdf8; }
     .check-btn {
-      padding: 13px 24px; border-radius: 12px;
-      background: linear-gradient(135deg,#38bdf8,#00ff88);
-      color: #060b14; font-weight: 700; font-size: 0.95rem;
-      border: none; cursor: pointer; white-space: nowrap;
-      transition: opacity 0.2s, transform 0.2s;
+      padding:13px 24px; border-radius:12px;
+      background:linear-gradient(135deg,#38bdf8,#00ff88);
+      color:#060b14; font-weight:700; font-size:.95rem;
+      border:none; cursor:pointer; white-space:nowrap;
+      transition:opacity .2s, transform .2s;
     }
-    .check-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-    .check-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* Scanning */
-    .scanning { display: none; margin-top: 1.5rem; color: #38bdf8; font-size: 0.88rem; }
-    .scanning.show { display: block; }
-    .scan-steps { margin: 0.8rem 0; text-align: left; }
-    .scan-step {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.82rem; color: #475569;
-      padding: 5px 0; transition: color 0.3s;
-    }
-    .scan-step.active { color: #38bdf8; }
-    .scan-step.done   { color: #00ff88; }
+    .check-btn:hover { opacity:.85; transform:translateY(-1px); }
+    .check-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+    .scanning { display:none; margin-top:1.5rem; color:#38bdf8; font-size:.88rem; }
+    .scanning.show { display:block; }
+    .scan-steps { margin:.8rem 0; text-align:left; }
+    .scan-step { display:flex; align-items:center; gap:8px; font-size:.82rem; color:#475569; padding:5px 0; transition:color .3s; }
+    .scan-step.active { color:#38bdf8; }
+    .scan-step.done   { color:#00ff88; }
     .scan-bar {
-      height: 3px;
-      background: linear-gradient(90deg,#38bdf8,#00ff88,#38bdf8);
-      background-size: 200% 100%; border-radius: 3px; margin-top: 10px;
-      animation: scan 1.2s linear infinite;
+      height:3px; background:linear-gradient(90deg,#38bdf8,#00ff88,#38bdf8);
+      background-size:200% 100%; border-radius:3px; margin-top:10px;
+      animation:scan 1.2s linear infinite;
     }
     @keyframes scan { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    /* Result */
     .result-box {
-      margin-top: 1.5rem; padding: 1.4rem;
-      border-radius: 16px; display: none; text-align: left;
-      animation: fadeUp 0.4s ease;
+      margin-top:1.5rem; padding:1.4rem; border-radius:16px;
+      display:none; text-align:left; animation:fadeUp .4s ease;
     }
-    .result-box.show  { display: block; }
+    .result-box.show { display:block; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-    .result-box.safe    { background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.3); }
-    .result-box.danger  { background: rgba(239,68,68,0.07);  border: 1px solid rgba(239,68,68,0.3); }
-    .result-box.warning { background: rgba(250,204,21,0.07); border: 1px solid rgba(250,204,21,0.3); }
-
-    .result-source  { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 0.5rem; }
-    .safe    .result-source { color: #00ff88; }
-    .danger  .result-source { color: #ef4444; }
-    .warning .result-source { color: #facc15; }
-
-    .result-verdict { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
-    .safe    .result-verdict { color: #00ff88; }
-    .danger  .result-verdict { color: #ef4444; }
-    .warning .result-verdict { color: #facc15; }
-
-    /* VirusTotal engine grid */
-    .vt-summary {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 0.8rem; margin-bottom: 1rem;
-    }
-    .vt-box {
-      background: rgba(0,0,0,0.3);
-      border-radius: 12px; padding: 0.8rem;
-      text-align: center;
-    }
-    .vt-box .vt-num { font-size: 1.5rem; font-weight: 800; }
-    .vt-box .vt-lbl { font-size: 0.68rem; color: #64748b; margin-top: 2px; }
-    .vt-box.malicious .vt-num { color: #ef4444; }
-    .vt-box.suspicious .vt-num{ color: #facc15; }
-    .vt-box.clean     .vt-num { color: #00ff88; }
-    .vt-box.total     .vt-num { color: #38bdf8; }
-
-    /* Progress bar for malicious ratio */
-    .vt-ratio-bar {
-      height: 8px; border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      margin-bottom: 1rem; overflow: hidden;
-    }
-    .vt-ratio-fill {
-      height: 100%; border-radius: 999px;
-      transition: width 0.8s ease;
-    }
-
-    .reasons { list-style: none; padding: 0; margin: 0; }
-    .reasons li {
-      font-size: 0.87rem; color: #94a3b8;
-      padding: 5px 0; display: flex; gap: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
-    .reasons li:last-child { border-bottom: none; }
-    .reasons li::before { content: '▹'; color: #38bdf8; flex-shrink: 0; }
-
-    /* Stats */
-    .db-stats { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
-    .db-stat  { text-align: center; font-size: 0.78rem; color: #64748b; }
-    .db-stat span { display: block; font-size: 1rem; font-weight: 700; color: #38bdf8; }
-
-    .rate-notice { margin-top: 1rem; font-size: 0.75rem; color: #334155; }
-
-    /* Error box */
-    .error-box {
-      margin-top: 1.5rem; padding: 1.2rem;
-      border-radius: 14px; background: rgba(250,204,21,0.07);
-      border: 1px solid rgba(250,204,21,0.3);
-      color: #facc15; font-size: 0.88rem; display: none;
-    }
-    .error-box.show { display: block; }
+    .result-box.safe    { background:rgba(0,255,136,0.07); border:1px solid rgba(0,255,136,0.3); }
+    .result-box.danger  { background:rgba(239,68,68,0.07);  border:1px solid rgba(239,68,68,0.3); }
+    .result-box.warning { background:rgba(250,204,21,0.07); border:1px solid rgba(250,204,21,0.3); }
+    .result-source  { font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; opacity:.6; margin-bottom:.5rem; }
+    .safe    .result-source { color:#00ff88; }
+    .danger  .result-source { color:#ef4444; }
+    .warning .result-source { color:#facc15; }
+    .result-verdict { font-size:1.25rem; font-weight:700; margin-bottom:1rem; }
+    .safe    .result-verdict { color:#00ff88; }
+    .danger  .result-verdict { color:#ef4444; }
+    .warning .result-verdict { color:#facc15; }
+    .vt-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:.8rem; margin-bottom:1rem; }
+    .vt-box { background:rgba(0,0,0,0.3); border-radius:12px; padding:.8rem; text-align:center; }
+    .vt-box .vt-num { font-size:1.5rem; font-weight:800; }
+    .vt-box .vt-lbl { font-size:.68rem; color:#64748b; margin-top:2px; }
+    .vt-box.malicious  .vt-num { color:#ef4444; }
+    .vt-box.suspicious .vt-num { color:#facc15; }
+    .vt-box.clean      .vt-num { color:#00ff88; }
+    .vt-box.total      .vt-num { color:#38bdf8; }
+    .vt-ratio-bar { height:8px; border-radius:999px; background:rgba(255,255,255,0.08); margin-bottom:1rem; overflow:hidden; }
+    .vt-ratio-fill { height:100%; border-radius:999px; transition:width .8s ease; }
+    .reasons { list-style:none; padding:0; margin:0; }
+    .reasons li { font-size:.87rem; color:#94a3b8; padding:5px 0; display:flex; gap:8px; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .reasons li:last-child { border-bottom:none; }
+    .reasons li::before { content:'▹'; color:#38bdf8; flex-shrink:0; }
+    .db-stats { display:flex; justify-content:center; gap:1.5rem; margin-top:1.5rem; flex-wrap:wrap; }
+    .db-stat  { text-align:center; font-size:.78rem; color:#64748b; }
+    .db-stat span { display:block; font-size:1rem; font-weight:700; color:#38bdf8; }
+    .rate-notice { margin-top:1rem; font-size:.75rem; color:#334155; }
+    .error-box { margin-top:1.5rem; padding:1.2rem; border-radius:14px; background:rgba(250,204,21,0.07); border:1px solid rgba(250,204,21,0.3); color:#facc15; font-size:.88rem; display:none; text-align:left; }
+    .error-box.show { display:block; }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">
-  <img src="img/ChatGPT Image May 9, 2026, 09_23_54 AM.png" alt="CyberDefence Logo">
-</div>
+  <div class="logo">CyberDefence</div>
   <button class="nav-toggle" onclick="toggleNav()">☰</button>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
@@ -179,46 +120,35 @@
   <div class="phish-card">
     <h2>🎣 Phishing Detector</h2>
     <p class="subtitle">Real-time scanning powered by 90+ security engines</p>
-
     <div class="engine-badges">
       <span class="engine-badge active">🔴 VirusTotal</span>
       <span class="engine-badge active">🛡 CyberDefence DB</span>
     </div>
-
     <div class="input-row">
       <input type="text" id="urlInput" placeholder="https://example.com"/>
       <button class="check-btn" id="checkBtn" onclick="checkURL()">Scan Now</button>
     </div>
-
-    <!-- Scanning steps -->
     <div class="scanning" id="scanning">
       <div class="scan-steps">
         <div class="scan-step" id="step1">⬜ Checking CyberDefence database...</div>
-        <div class="scan-step" id="step2">⬜ Submitting URL to VirusTotal...</div>
-        <div class="scan-step" id="step3">⬜ Waiting for 90+ engines to scan...</div>
+        <div class="scan-step" id="step2">⬜ Connecting to VirusTotal...</div>
+        <div class="scan-step" id="step3">⬜ Scanning with 90+ engines...</div>
         <div class="scan-step" id="step4">⬜ Reading results...</div>
       </div>
       <div class="scan-bar"></div>
     </div>
-
-    <!-- Error -->
     <div class="error-box" id="errorBox"></div>
-
-    <!-- Result -->
     <div class="result-box" id="resultBox">
       <div class="result-source"  id="resultSource"></div>
       <div class="result-verdict" id="resultVerdict"></div>
-      <div id="vtSummary"></div>
+      <div id="vtGrid"></div>
       <ul class="reasons" id="reasons"></ul>
     </div>
-
-    <!-- Stats -->
     <div class="db-stats">
       <div class="db-stat"><span id="statPhish">—</span>Known Phishing</div>
       <div class="db-stat"><span id="statSafe">—</span>Known Safe</div>
       <div class="db-stat"><span id="statChecks">—</span>Total Scans</div>
     </div>
-
     <div class="rate-notice">⚡ VirusTotal free: 4 scans/min · 500/day</div>
   </div>
 </div>
@@ -233,7 +163,6 @@
   let currentUser = null;
   let VT_API_KEY  = null;
 
-  // Load API key from Firebase
   async function loadApiKey() {
     try {
       const snap = await get(ref(db,'config/vtApiKey'));
@@ -242,7 +171,6 @@
   }
   loadApiKey();
 
-  // Auth
   onAuthStateChanged(auth, user => {
     currentUser = user;
     const area = document.getElementById('authArea');
@@ -255,7 +183,6 @@
   window.doLogout  = () => signOut(auth).then(() => location.href='index.html');
   window.toggleNav = () => document.getElementById('navLinks').classList.toggle('open');
 
-  // Stats
   async function loadStats() {
     try {
       const [pSnap, sSnap, cSnap] = await Promise.all([
@@ -278,46 +205,69 @@
   }
 
   function step(id, state) {
-    const el = document.getElementById(id);
-    const text = el.textContent.slice(2);
-    if (state === 'active') { el.className='scan-step active'; el.textContent='🔄 '+text; }
-    if (state === 'done')   { el.className='scan-step done';   el.textContent='✅ '+text; }
-    if (state === 'fail')   { el.className='scan-step';        el.textContent='❌ '+text; }
+    const el   = document.getElementById(id);
+    const text = el.textContent.replace(/^[⬜🔄✅❌]\s/,'');
+    const icons = { active:'🔄', done:'✅', fail:'❌' };
+    el.className = 'scan-step' + (state==='active'?' active': state==='done'?' done':'');
+    el.textContent = (icons[state]||'⬜') + ' ' + text;
   }
 
-  function showError(msg) {
-    const box = document.getElementById('errorBox');
-    box.textContent = msg;
-    box.classList.add('show');
+  function showErr(msg) {
+    const b = document.getElementById('errorBox');
+    b.innerHTML = '⚠️ ' + msg;
+    b.classList.add('show');
   }
 
-  // VirusTotal scan
+  // ── VirusTotal using URL identifier (base64) — avoids CORS submit issue
   async function scanVT(url) {
-    // Submit URL
+    // Encode URL to base64 (VirusTotal URL ID format)
+    const urlId = btoa(url).replace(/=/g,'');
+
+    // First try: look up existing report (no CORS issue)
+    const lookupRes = await fetch(
+      `https://www.virustotal.com/api/v3/urls/${urlId}`,
+      { headers: { 'x-apikey': VT_API_KEY } }
+    );
+
+    if (lookupRes.ok) {
+      const data = await lookupRes.json();
+      const stats = data?.data?.attributes?.last_analysis_stats;
+      if (stats) return stats;
+    }
+
+    // If not in cache — submit for analysis using no-cors workaround via form
+    const formData = new FormData();
+    formData.append('url', url);
+
     const submitRes = await fetch('https://www.virustotal.com/api/v3/urls', {
       method: 'POST',
-      headers: {
-        'x-apikey': VT_API_KEY,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'url=' + encodeURIComponent(url)
+      headers: { 'x-apikey': VT_API_KEY },
+      body: formData
     });
 
-    if (!submitRes.ok) throw new Error('VirusTotal submit failed: ' + submitRes.status);
+    if (!submitRes.ok) {
+      const errText = await submitRes.text();
+      throw new Error(`Submit failed (${submitRes.status}): ${errText.slice(0,100)}`);
+    }
+
     const submitData = await submitRes.json();
     const analysisId = submitData?.data?.id;
-    if (!analysisId) throw new Error('No analysis ID returned');
+    if (!analysisId) throw new Error('No analysis ID returned from VirusTotal');
 
-    // Wait for engines to scan
-    await new Promise(r => setTimeout(r, 4000));
-
-    // Get results
-    const resultRes = await fetch(`https://www.virustotal.com/api/v3/analyses/${analysisId}`, {
-      headers: { 'x-apikey': VT_API_KEY }
-    });
-    if (!resultRes.ok) throw new Error('VirusTotal result failed: ' + resultRes.status);
-    const resultData = await resultRes.json();
-    return resultData?.data?.attributes?.stats;
+    // Poll for results (max 3 attempts)
+    for (let i = 0; i < 3; i++) {
+      await new Promise(r => setTimeout(r, 5000));
+      const resultRes = await fetch(
+        `https://www.virustotal.com/api/v3/analyses/${analysisId}`,
+        { headers: { 'x-apikey': VT_API_KEY } }
+      );
+      if (!resultRes.ok) continue;
+      const resultData = await resultRes.json();
+      const status     = resultData?.data?.attributes?.status;
+      const stats      = resultData?.data?.attributes?.stats;
+      if (status === 'completed' && stats) return stats;
+    }
+    throw new Error('Analysis timed out — try again in a moment');
   }
 
   window.checkURL = async () => {
@@ -327,18 +277,18 @@
     const box      = document.getElementById('resultBox');
     const errBox   = document.getElementById('errorBox');
 
-    if (!url) { showError('⚠️ Please enter a URL to scan'); return; }
+    if (!url) { showErr('Please enter a URL to scan'); return; }
 
-    // Reset
+    // Reset UI
     btn.disabled = true;
     box.className = 'result-box';
     errBox.classList.remove('show');
-    document.getElementById('vtSummary').innerHTML = '';
+    document.getElementById('vtGrid').innerHTML   = '';
     document.getElementById('reasons').innerHTML  = '';
     ['step1','step2','step3','step4'].forEach(s => {
       const el = document.getElementById(s);
       el.className = 'scan-step';
-      el.textContent = '⬜ ' + el.textContent.slice(2);
+      el.textContent = '⬜ ' + el.textContent.replace(/^[⬜🔄✅❌]\s/,'');
     });
     scanning.classList.add('show');
 
@@ -346,7 +296,7 @@
     let verdict, type, reasons=[], source;
 
     try {
-      // ── STEP 1: CyberDefence Firebase DB
+      // ── STEP 1: Firebase DB check
       step('step1','active');
       const [pSnap, sSnap] = await Promise.all([
         get(ref(db,'phishingDB/knownPhishing')),
@@ -372,25 +322,22 @@
           verdict = '✅ Verified Safe';
           type    = 'safe';
           source  = '✓ CyberDefence Safe Database';
-          reasons = [
-            `Category: ${match.category}`,
-            'This URL is verified in our safe list'
-          ];
+          reasons = [`Category: ${match.category}`, 'Verified in our safe list'];
         }
       }
       step('step1','done');
 
-      // ── STEP 2, 3, 4: VirusTotal
+      // ── STEP 2,3,4: VirusTotal
       if (!verdict) {
         if (!VT_API_KEY) {
           scanning.classList.remove('show');
           btn.disabled = false;
-          showError('⚠️ VirusTotal API key not configured. Go to phish-admin.html to add your key.');
+          showErr('VirusTotal API key not found. Go to phish-admin.html → save your key.');
           return;
         }
 
         step('step2','active');
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 200));
         step('step2','done');
 
         step('step3','active');
@@ -398,18 +345,17 @@
         step('step3','done');
 
         step('step4','active');
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 200));
 
         const malicious  = stats?.malicious  || 0;
         const suspicious = stats?.suspicious || 0;
         const harmless   = stats?.harmless   || 0;
         const undetected = stats?.undetected || 0;
         const total      = malicious + suspicious + harmless + undetected;
-        const flagged    = malicious + suspicious;
         const ratio      = total > 0 ? Math.round((malicious/total)*100) : 0;
+        const barColor   = malicious >= 3 ? '#ef4444' : malicious > 0 ? '#facc15' : '#00ff88';
 
-        // VirusTotal summary boxes
-        document.getElementById('vtSummary').innerHTML = `
+        document.getElementById('vtGrid').innerHTML = `
           <div class="vt-summary">
             <div class="vt-box malicious"><div class="vt-num">${malicious}</div><div class="vt-lbl">Malicious</div></div>
             <div class="vt-box suspicious"><div class="vt-num">${suspicious}</div><div class="vt-lbl">Suspicious</div></div>
@@ -417,36 +363,35 @@
             <div class="vt-box total"><div class="vt-num">${total}</div><div class="vt-lbl">Engines</div></div>
           </div>
           <div class="vt-ratio-bar">
-            <div class="vt-ratio-fill" style="width:${ratio}%;background:${malicious>=3?'#ef4444':malicious>0?'#facc15':'#00ff88'}"></div>
+            <div class="vt-ratio-fill" style="width:${ratio}%;background:${barColor}"></div>
           </div>`;
 
         source = `🔬 VirusTotal — ${total} Security Engines`;
 
         if (malicious >= 3) {
-          verdict = `🔴 DANGEROUS — ${malicious} engines detected malware!`;
+          verdict = `🔴 DANGEROUS — ${malicious} engines detected threats!`;
           type    = 'danger';
           reasons = [
             `${malicious} out of ${total} engines flagged this URL`,
-            suspicious > 0 ? `${suspicious} additional engines flagged as suspicious` : null,
-            'This site is confirmed dangerous',
-            'Do NOT visit, login, or download anything from it',
-            'Report it to your internet provider'
+            suspicious > 0 ? `${suspicious} additional engines flagged suspicious` : null,
+            'Do NOT visit, login, or download from this site',
+            'Report to your internet provider immediately'
           ].filter(Boolean);
         } else if (malicious > 0 || suspicious >= 2) {
-          verdict = `⚠️ SUSPICIOUS — ${flagged} engines flagged this`;
+          verdict = `⚠️ SUSPICIOUS — ${malicious + suspicious} engines flagged this`;
           type    = 'warning';
           reasons = [
-            `${malicious} engines detected malware, ${suspicious} flagged suspicious`,
+            `${malicious} malicious, ${suspicious} suspicious out of ${total} engines`,
             `${harmless} engines found it clean`,
-            'Be very careful with this URL',
+            'Proceed with extreme caution',
             'Do not enter passwords or personal info'
           ];
         } else if (suspicious === 1) {
-          verdict = `⚠️ LOW RISK — 1 engine flagged suspicious`;
+          verdict = `⚠️ LOW RISK — 1 engine flagged this as suspicious`;
           type    = 'warning';
           reasons = [
-            '1 engine flagged this as suspicious',
-            `${harmless} engines found it clean`,
+            '1 out of ' + total + ' engines flagged this suspicious',
+            `${harmless} engines confirmed it clean`,
             'Proceed with caution'
           ];
         } else {
@@ -455,7 +400,7 @@
           reasons = [
             `${harmless} engines confirmed this URL is safe`,
             undetected > 0 ? `${undetected} engines had no data on this URL` : null,
-            'No threats detected by any engine'
+            'No threats detected'
           ].filter(Boolean);
         }
         step('step4','done');
@@ -464,13 +409,12 @@
     } catch(e) {
       scanning.classList.remove('show');
       btn.disabled = false;
-      showError(`⚠️ Scan failed: ${e.message}. Check your internet connection or try again in a minute (rate limit: 4/min).`);
+      showErr(`Scan failed: ${e.message}`);
       return;
     }
 
     scanning.classList.remove('show');
     btn.disabled = false;
-
     document.getElementById('resultSource').textContent  = source;
     document.getElementById('resultVerdict').textContent = verdict;
     document.getElementById('reasons').innerHTML = reasons.map(r=>`<li>${r}</li>`).join('');
@@ -478,11 +422,7 @@
 
     // Log to Firebase
     try {
-      await push(ref(db,'phishChecks'), {
-        url, verdict, type,
-        user:      currentUser?.email || 'anonymous',
-        timestamp: Date.now()
-      });
+      await push(ref(db,'phishChecks'), { url, verdict, type, user: currentUser?.email||'anonymous', timestamp: Date.now() });
       const cSnap = await get(ref(db,'phishingDB/totalScans'));
       await set(ref(db,'phishingDB/totalScans'), (cSnap.exists() ? cSnap.val() : 0) + 1);
       loadStats();
