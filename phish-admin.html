@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberDefence – Phishing DB Admin</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#060b14;color:#e2e8f0;min-height:100vh;}
+    .login-section{display:flex;justify-content:center;align-items:center;min-height:100vh;}
+    .login-box{background:#0d1626;border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:2.5rem;width:90%;max-width:360px;text-align:center;}
+    .login-box h2{margin-bottom:1.5rem;color:#38bdf8;}
+    .login-box input{width:100%;padding:12px;background:#060b14;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:white;font-size:.95rem;margin-bottom:1rem;}
+    .login-box input:focus{outline:none;border-color:#38bdf8;}
+    .login-box button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#00ff88);color:#060b14;font-weight:700;font-size:1rem;cursor:pointer;}
+    .err{color:#ef4444;font-size:.85rem;margin-top:.5rem;min-height:20px;}
+    header{padding:1.2rem 5%;background:#0d1626;border-bottom:1px solid rgba(56,189,248,.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    header h1{font-size:1.3rem;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .logout-btn{background:none;border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:20px;padding:6px 16px;cursor:pointer;font-size:.9rem;}
+    .dash{padding:2rem 5%;}
+    .hidden{display:none;}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat{background:#0d1626;border:1px solid rgba(56,189,248,.15);border-radius:16px;padding:1.2rem;text-align:center;}
+    .stat .num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat .lbl{font-size:.78rem;color:#64748b;margin-top:4px;}
+    .add-section{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+    @media(max-width:700px){.add-section{grid-template-columns:1fr;}}
+    .add-card{background:#0d1626;border:1px solid rgba(56,189,248,.15);border-radius:20px;padding:1.8rem;}
+    .add-card h3{margin-bottom:1.2rem;font-size:1rem;}
+    .add-card.phishing h3{color:#ef4444;}
+    .add-card.safe h3{color:#00ff88;}
+    .add-card input,.add-card select{width:100%;padding:10px 14px;background:#060b14;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:white;font-size:.9rem;margin-bottom:.8rem;}
+    .add-card input:focus,.add-card select:focus{outline:none;border-color:#38bdf8;}
+    .add-card select option{background:#0d1626;}
+    .add-btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;}
+    .add-btn.phishing{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;}
+    .add-btn.phishing:hover{background:rgba(239,68,68,.25);}
+    .add-btn.safe{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.3);color:#00ff88;}
+    .add-btn.safe:hover{background:rgba(0,255,136,.25);}
+    .msg{font-size:.82rem;margin-top:.6rem;min-height:18px;text-align:center;}
+    .msg.ok{color:#00ff88;} .msg.bad{color:#ef4444;}
+    .tabs{display:flex;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap;align-items:center;}
+    .tab{padding:7px 18px;border-radius:999px;border:1px solid rgba(56,189,248,.2);background:none;color:#64748b;cursor:pointer;font-size:.88rem;transition:.2s;}
+    .tab.active{background:rgba(56,189,248,.1);border-color:#38bdf8;color:#38bdf8;}
+    .refresh-btn{margin-left:auto;padding:6px 16px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#38bdf8;cursor:pointer;font-size:.85rem;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:.87rem;}
+    th{text-align:left;padding:10px 12px;background:#0d1626;color:#38bdf8;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(56,189,248,.1);}
+    td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;word-break:break-all;}
+    tr:hover td{background:rgba(56,189,248,.03);}
+    .del-btn{background:none;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;padding:3px 10px;cursor:pointer;font-size:.8rem;white-space:nowrap;}
+    .del-btn:hover{background:rgba(239,68,68,.1);}
+    .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.75rem;font-weight:600;}
+    .badge.phishing{background:rgba(239,68,68,.12);color:#ef4444;}
+    .badge.safe{background:rgba(0,255,136,.12);color:#00ff88;}
+    .empty{text-align:center;padding:2rem;color:#64748b;}
+
+    /* API key section */
+    .api-section{background:#0d1626;border:1px solid rgba(250,204,21,.2);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
+    .api-section h3{color:#facc15;margin-bottom:1rem;font-size:.95rem;}
+    .api-row{display:flex;gap:.8rem;flex-wrap:wrap;}
+    .api-row input{flex:1 1 200px;padding:10px 14px;background:#060b14;border:1px solid rgba(250,204,21,.2);border-radius:10px;color:white;font-size:.9rem;}
+    .api-row input:focus{outline:none;border-color:#facc15;}
+    .save-api-btn{padding:10px 20px;border-radius:10px;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.3);color:#facc15;font-weight:700;cursor:pointer;font-size:.9rem;white-space:nowrap;}
+    .save-api-btn:hover{background:rgba(250,204,21,.25);}
+    .api-note{font-size:.78rem;color:#64748b;margin-top:.8rem;}
+  </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-section">
+  <div class="login-box">
+    <h2>🔐 Phishing DB Admin</h2>
+    <input type="email"    id="adminEmail" placeholder="Admin email"/>
+    <input type="password" id="adminPass"  placeholder="Password"/>
+    <button onclick="adminLogin()">Login</button>
+    <p class="err" id="loginErr"></p>
+  </div>
+</div>
+
+<div id="dashSection" class="hidden">
+  <header>
+    <h1>🎣 Phishing Database Manager</h1>
+    <div style="display:flex;gap:.8rem;align-items:center;">
+      <a href="admin.html" style="color:#38bdf8;font-size:.85rem;text-decoration:none;">← Main Admin</a>
+      <button class="logout-btn" onclick="adminLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="dash">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="num" id="cntPhish">0</div><div class="lbl">Phishing URLs</div></div>
+      <div class="stat"><div class="num" id="cntSafe">0</div><div class="lbl">Safe URLs</div></div>
+      <div class="stat"><div class="num" id="cntScans">0</div><div class="lbl">Total Scans</div></div>
+    </div>
+
+    <!-- VirusTotal API Key (stored safely in Firebase) -->
+    <div class="api-section">
+      <h3>🔑 VirusTotal API Key (stored in Firebase — never in GitHub)</h3>
+      <div class="api-row">
+        <input type="password" id="vtKeyInput" placeholder="Paste your VirusTotal API key here"/>
+        <button class="save-api-btn" onclick="saveApiKey()">Save to Firebase</button>
+      </div>
+      <p class="api-note">⚠ This key is stored in your Firebase database only — it will NOT appear in your GitHub code. Safe! 🔐</p>
+      <p class="msg" id="apiMsg"></p>
+    </div>
+
+    <!-- Add URLs -->
+    <div class="add-section">
+      <div class="add-card phishing">
+        <h3>🔴 Add Phishing URL</h3>
+        <input type="text" id="phishUrl" placeholder="http://fake-paypal.com"/>
+        <select id="phishCat">
+          <option value="Phishing Site">Phishing Site</option>
+          <option value="Fake Login">Fake Login Page</option>
+          <option value="Scam">Scam Website</option>
+          <option value="Malware">Malware Distribution</option>
+          <option value="Spam">Spam Site</option>
+        </select>
+        <button class="add-btn phishing" onclick="addPhishing()">+ Add to Phishing DB</button>
+        <p class="msg" id="phishMsg"></p>
+      </div>
+      <div class="add-card safe">
+        <h3>✅ Add Safe URL</h3>
+        <input type="text" id="safeUrl" placeholder="https://google.com"/>
+        <select id="safeCat">
+          <option value="Trusted Website">Trusted Website</option>
+          <option value="Social Media">Social Media</option>
+          <option value="Government">Government</option>
+          <option value="Education">Education</option>
+          <option value="Banking">Official Banking</option>
+          <option value="News">News Media</option>
+        </select>
+        <button class="add-btn safe" onclick="addSafe()">+ Add to Safe DB</button>
+        <p class="msg" id="safeMsg"></p>
+      </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('Phishing',this)">🔴 Phishing URLs</button>
+      <button class="tab"        onclick="showTab('Safe',this)">✅ Safe URLs</button>
+      <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+
+    <div class="table-wrap" id="tabPhishing">
+      <table><thead><tr><th>URL</th><th>Category</th><th>Added</th><th>Delete</th></tr></thead>
+      <tbody id="bodyPhishing"></tbody></table>
+    </div>
+    <div class="table-wrap hidden" id="tabSafe">
+      <table><thead><tr><th>URL</th><th>Category</th><th>Added</th><th>Delete</th></tr></thead>
+      <tbody id="bodySafe"></tbody></table>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { signInWithEmailAndPassword, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { ref, get, push, remove, set }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const fmt = ts => ts ? new Date(ts).toLocaleDateString() : '—';
+
+  window.adminLogin = async () => {
+    const email = document.getElementById('adminEmail').value.trim();
+    const pass  = document.getElementById('adminPass').value;
+    try { await signInWithEmailAndPassword(auth, email, pass); }
+    catch(e) { document.getElementById('loginErr').textContent = 'Invalid credentials.'; }
+  };
+  window.adminLogout = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashSection').classList.remove('hidden');
+      loadAll(); loadCurrentKey();
+    } else {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('dashSection').classList.add('hidden');
+    }
+  });
+
+  // Load current API key status
+  async function loadCurrentKey() {
+    const snap = await get(ref(db,'config/vtApiKey'));
+    if (snap.exists()) {
+      document.getElementById('vtKeyInput').placeholder = '✅ API key is saved in Firebase';
+    }
+  }
+
+  // Save API key to Firebase
+  window.saveApiKey = async () => {
+    const key = document.getElementById('vtKeyInput').value.trim();
+    const msg = document.getElementById('apiMsg');
+    if (!key) { msg.className='msg bad'; msg.textContent='Enter your API key'; return; }
+    try {
+      await set(ref(db,'config/vtApiKey'), key);
+      msg.className='msg ok'; msg.textContent='✅ API key saved to Firebase safely!';
+      document.getElementById('vtKeyInput').value = '';
+      document.getElementById('vtKeyInput').placeholder = '✅ API key is saved in Firebase';
+    } catch(e) { msg.className='msg bad'; msg.textContent='Error saving key'; }
+    setTimeout(()=>msg.textContent='', 3000);
+  };
+
+  window.loadAll = async () => {
+    const [pSnap, sSnap, cSnap] = await Promise.all([
+      get(ref(db,'phishingDB/knownPhishing')),
+      get(ref(db,'phishingDB/knownSafe')),
+      get(ref(db,'phishingDB/totalScans'))
+    ]);
+    const pData = pSnap.val() || {};
+    const sData = sSnap.val() || {};
+    document.getElementById('cntPhish').textContent = Object.keys(pData).length;
+    document.getElementById('cntSafe').textContent  = Object.keys(sData).length;
+    document.getElementById('cntScans').textContent = cSnap.exists() ? cSnap.val() : 0;
+
+    document.getElementById('bodyPhishing').innerHTML = Object.keys(pData).length
+      ? Object.entries(pData).reverse().map(([k,v])=>`<tr>
+          <td>${v.url}</td>
+          <td><span class="badge phishing">${v.category}</span></td>
+          <td>${fmt(v.addedAt)}</td>
+          <td><button class="del-btn" onclick="del('knownPhishing','${k}')">🗑 Delete</button></td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" class="empty">No phishing URLs yet</td></tr>';
+
+    document.getElementById('bodySafe').innerHTML = Object.keys(sData).length
+      ? Object.entries(sData).reverse().map(([k,v])=>`<tr>
+          <td>${v.url}</td>
+          <td><span class="badge safe">${v.category}</span></td>
+          <td>${fmt(v.addedAt)}</td>
+          <td><button class="del-btn" onclick="del('knownSafe','${k}')">🗑 Delete</button></td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" class="empty">No safe URLs yet</td></tr>';
+  };
+
+  window.addPhishing = async () => {
+    const url = document.getElementById('phishUrl').value.trim();
+    const cat = document.getElementById('phishCat').value;
+    const msg = document.getElementById('phishMsg');
+    if (!url) { msg.className='msg bad'; msg.textContent='Enter a URL'; return; }
+    await push(ref(db,'phishingDB/knownPhishing'), { url, category: cat, addedAt: Date.now() });
+    msg.className='msg ok'; msg.textContent='✅ Added!';
+    document.getElementById('phishUrl').value='';
+    loadAll(); setTimeout(()=>msg.textContent='',3000);
+  };
+
+  window.addSafe = async () => {
+    const url = document.getElementById('safeUrl').value.trim();
+    const cat = document.getElementById('safeCat').value;
+    const msg = document.getElementById('safeMsg');
+    if (!url) { msg.className='msg bad'; msg.textContent='Enter a URL'; return; }
+    await push(ref(db,'phishingDB/knownSafe'), { url, category: cat, addedAt: Date.now() });
+    msg.className='msg ok'; msg.textContent='✅ Added!';
+    document.getElementById('safeUrl').value='';
+    loadAll(); setTimeout(()=>msg.textContent='',3000);
+  };
+
+  window.del = async (list, key) => {
+    if (!confirm('Delete this entry?')) return;
+    await remove(ref(db,`phishingDB/${list}/${key}`));
+    loadAll();
+  };
+
+  window.showTab = (name, btn) => {
+    ['Phishing','Safe'].forEach(t => document.getElementById('tab'+t).classList.add('hidden'));
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab'+name).classList.remove('hidden');
+    btn.classList.add('active');
+  };
+</script>
+</body>
+</html>
