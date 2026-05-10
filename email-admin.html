@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberDefence – Email Breach Admin</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#060b14;color:#e2e8f0;min-height:100vh;}
+    .login-section{display:flex;justify-content:center;align-items:center;min-height:100vh;}
+    .login-box{background:#0d1626;border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:2.5rem;width:90%;max-width:360px;text-align:center;}
+    .login-box h2{margin-bottom:1.5rem;color:#38bdf8;}
+    .login-box input{width:100%;padding:12px;background:#060b14;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:white;font-size:.95rem;margin-bottom:1rem;}
+    .login-box input:focus{outline:none;border-color:#38bdf8;}
+    .login-box button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#00ff88);color:#060b14;font-weight:700;font-size:1rem;cursor:pointer;}
+    .err{color:#ef4444;font-size:.85rem;margin-top:.5rem;min-height:20px;}
+    header{padding:1.2rem 5%;background:#0d1626;border-bottom:1px solid rgba(56,189,248,.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    header h1{font-size:1.3rem;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .logout-btn{background:none;border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:20px;padding:6px 16px;cursor:pointer;}
+    .dash{padding:2rem 5%;}
+    .hidden{display:none;}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat{background:#0d1626;border:1px solid rgba(56,189,248,.15);border-radius:16px;padding:1.2rem;text-align:center;}
+    .stat .num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#38bdf8,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat .lbl{font-size:.78rem;color:#64748b;margin-top:4px;}
+    .add-card{background:#0d1626;border:1px solid rgba(239,68,68,.2);border-radius:20px;padding:2rem;margin-bottom:2rem;}
+    .add-card h3{color:#ef4444;margin-bottom:1.5rem;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    @media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+    .form-group{display:flex;flex-direction:column;gap:.4rem;}
+    .form-group label{font-size:.78rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;}
+    .form-group input,.form-group textarea{padding:10px 14px;background:#060b14;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:white;font-size:.9rem;font-family:inherit;}
+    .form-group input:focus,.form-group textarea:focus{outline:none;border-color:#38bdf8;}
+    .form-group textarea{height:80px;resize:vertical;}
+    .full-width{grid-column:1/-1;}
+    .data-types{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.4rem;}
+    .data-type-cb{display:none;}
+    .data-type-label{padding:4px 12px;border-radius:999px;font-size:.78rem;cursor:pointer;border:1px solid rgba(56,189,248,.2);color:#64748b;transition:.2s;}
+    .data-type-cb:checked + .data-type-label{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:#ef4444;}
+    .add-btn{margin-top:1.2rem;padding:11px 24px;border-radius:10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-weight:700;cursor:pointer;font-size:.9rem;}
+    .add-btn:hover{background:rgba(239,68,68,.25);}
+    .msg{font-size:.82rem;margin-top:.8rem;min-height:18px;}
+    .msg.ok{color:#00ff88;} .msg.bad{color:#ef4444;}
+    .section-title{font-size:1rem;color:#38bdf8;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
+    .refresh-btn{padding:6px 16px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:#38bdf8;cursor:pointer;font-size:.82rem;}
+    .breach-list{display:flex;flex-direction:column;gap:1rem;}
+    .breach-item{background:#0d1626;border:1px solid rgba(239,68,68,.15);border-radius:16px;padding:1.2rem 1.5rem;}
+    .breach-item-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem;}
+    .breach-item-name{font-weight:700;color:#ef4444;}
+    .breach-item-date{font-size:.75rem;color:#64748b;}
+    .breach-item-desc{font-size:.83rem;color:#94a3b8;margin-bottom:.6rem;}
+    .breach-item-meta{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;}
+    .breach-tag{font-size:.7rem;padding:2px 10px;border-radius:999px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;}
+    .del-btn{background:none;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;padding:3px 10px;cursor:pointer;font-size:.78rem;margin-left:auto;}
+    .empty{text-align:center;padding:2rem;color:#64748b;}
+  </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-section">
+  <div class="login-box">
+    <h2>🔐 Breach DB Admin</h2>
+    <input type="email"    id="adminEmail" placeholder="Admin email"/>
+    <input type="password" id="adminPass"  placeholder="Password"/>
+    <button onclick="adminLogin()">Login</button>
+    <p class="err" id="loginErr"></p>
+  </div>
+</div>
+
+<div id="dashSection" class="hidden">
+  <header>
+    <h1>📧 Email Breach Database</h1>
+    <div style="display:flex;gap:.8rem;align-items:center;">
+      <a href="admin.html" style="color:#38bdf8;font-size:.85rem;text-decoration:none;">← Main Admin</a>
+      <button class="logout-btn" onclick="adminLogout()">Logout</button>
+    </div>
+  </header>
+  <div class="dash">
+    <div class="stats">
+      <div class="stat"><div class="num" id="cntBreaches">0</div><div class="lbl">Breaches</div></div>
+      <div class="stat"><div class="num" id="cntChecks">0</div><div class="lbl">Emails Checked</div></div>
+      <div class="stat"><div class="num" id="cntFound">0</div><div class="lbl">Emails Found</div></div>
+    </div>
+    <div class="add-card">
+      <h3>🔴 Add New Data Breach</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Breach Name *</label><input type="text" id="bName" placeholder="Facebook 2021"/></div>
+        <div class="form-group"><label>Breach Date *</label><input type="text" id="bDate" placeholder="April 2021"/></div>
+        <div class="form-group"><label>Domain</label><input type="text" id="bDomain" placeholder="facebook.com"/></div>
+        <div class="form-group"><label>Records Affected</label><input type="text" id="bRecords" placeholder="533 million"/></div>
+        <div class="form-group full-width"><label>Description *</label><textarea id="bDesc" placeholder="What happened in this breach..."></textarea></div>
+        <div class="form-group full-width">
+          <label>Data Types Exposed</label>
+          <div class="data-types">
+            <input type="checkbox" class="data-type-cb" id="dt1" value="Email"><label class="data-type-label" for="dt1">Email</label>
+            <input type="checkbox" class="data-type-cb" id="dt2" value="Password"><label class="data-type-label" for="dt2">Password</label>
+            <input type="checkbox" class="data-type-cb" id="dt3" value="Phone"><label class="data-type-label" for="dt3">Phone</label>
+            <input type="checkbox" class="data-type-cb" id="dt4" value="Name"><label class="data-type-label" for="dt4">Name</label>
+            <input type="checkbox" class="data-type-cb" id="dt5" value="Address"><label class="data-type-label" for="dt5">Address</label>
+            <input type="checkbox" class="data-type-cb" id="dt6" value="Credit Card"><label class="data-type-label" for="dt6">Credit Card</label>
+            <input type="checkbox" class="data-type-cb" id="dt7" value="Username"><label class="data-type-label" for="dt7">Username</label>
+            <input type="checkbox" class="data-type-cb" id="dt8" value="IP Address"><label class="data-type-label" for="dt8">IP Address</label>
+          </div>
+        </div>
+        <div class="form-group full-width"><label>Specific Leaked Emails (one per line — optional)</label><textarea id="bEmails" placeholder="user@example.com&#10;another@gmail.com"></textarea></div>
+      </div>
+      <button class="add-btn" onclick="addBreach()">+ Add to Breach Database</button>
+      <p class="msg" id="addMsg"></p>
+    </div>
+    <div class="section-title">
+      <span>📋 All Breaches</span>
+      <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+    <div class="breach-list" id="breachList"><p class="empty">Loading...</p></div>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db } from './firebase-config.js';
+  import { signInWithEmailAndPassword, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { ref, get, push, remove }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  window.adminLogin  = async () => {
+    const email = document.getElementById('adminEmail').value.trim();
+    const pass  = document.getElementById('adminPass').value;
+    try { await signInWithEmailAndPassword(auth, email, pass); }
+    catch(e) { document.getElementById('loginErr').textContent = 'Invalid credentials.'; }
+  };
+  window.adminLogout = () => signOut(auth);
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashSection').classList.remove('hidden');
+      loadAll();
+    } else {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('dashSection').classList.add('hidden');
+    }
+  });
+
+  window.loadAll = async () => {
+    const [bSnap, eSnap] = await Promise.all([
+      get(ref(db,'breachDB/breaches')),
+      get(ref(db,'emailChecks'))
+    ]);
+    const breaches = bSnap.exists() ? Object.entries(bSnap.val()) : [];
+    const checks   = eSnap.exists() ? Object.values(eSnap.val()) : [];
+    document.getElementById('cntBreaches').textContent = breaches.length;
+    document.getElementById('cntChecks').textContent   = checks.length;
+    document.getElementById('cntFound').textContent    = checks.filter(c=>c.breached).length;
+
+    document.getElementById('breachList').innerHTML = breaches.length
+      ? breaches.reverse().map(([key,b])=>`
+          <div class="breach-item">
+            <div class="breach-item-top">
+              <span class="breach-item-name">🔓 ${b.name}</span>
+              <span class="breach-item-date">📅 ${b.date||'—'} · ${b.records||'?'} records</span>
+            </div>
+            <div class="breach-item-desc">${b.description||'—'}</div>
+            <div class="breach-item-meta">
+              ${(b.dataTypes||[]).map(t=>`<span class="breach-tag">${t}</span>`).join('')}
+              ${b.domain?`<span class="breach-tag">🌐 ${b.domain}</span>`:''}
+              ${b.emails?.length?`<span class="breach-tag">📧 ${b.emails.length} emails</span>`:''}
+              <button class="del-btn" onclick="delBreach('${key}')">🗑 Delete</button>
+            </div>
+          </div>`).join('')
+      : '<p class="empty">No breaches yet — add one above!</p>';
+  };
+
+  window.addBreach = async () => {
+    const name    = document.getElementById('bName').value.trim();
+    const date    = document.getElementById('bDate').value.trim();
+    const domain  = document.getElementById('bDomain').value.trim().toLowerCase();
+    const records = document.getElementById('bRecords').value.trim();
+    const desc    = document.getElementById('bDesc').value.trim();
+    const emailsRaw = document.getElementById('bEmails').value.trim();
+    const msg     = document.getElementById('addMsg');
+    if (!name||!date||!desc) { msg.className='msg bad'; msg.textContent='Name, date and description required!'; return; }
+    const dataTypes = [];
+    document.querySelectorAll('.data-type-cb:checked').forEach(cb=>dataTypes.push(cb.value));
+    if (!dataTypes.length) dataTypes.push('Email');
+    const emails = emailsRaw ? emailsRaw.split('\n').map(e=>e.trim().toLowerCase()).filter(e=>e.includes('@')) : [];
+    try {
+      await push(ref(db,'breachDB/breaches'),{ name, date, domain, records, description:desc, dataTypes, emails, addedAt:Date.now() });
+      msg.className='msg ok'; msg.textContent=`✅ "${name}" added!`;
+      ['bName','bDate','bDomain','bRecords','bDesc','bEmails'].forEach(id=>document.getElementById(id).value='');
+      document.querySelectorAll('.data-type-cb').forEach(cb=>cb.checked=false);
+      loadAll();
+    } catch(e) { msg.className='msg bad'; msg.textContent='Error: '+e.message; }
+    setTimeout(()=>msg.textContent='',4000);
+  };
+
+  window.delBreach = async (key) => {
+    if (!confirm('Delete?')) return;
+    await remove(ref(db,`breachDB/breaches/${key}`));
+    loadAll();
+  };
+</script>
+</body>
+</html>
