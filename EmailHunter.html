@@ -3,26 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberDefence – Email Breach</title>
+  <title>CyberDefence – Email Breach Checker</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body{background:linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.9)),url('img/tJfDsy74xZ08sfIIhFWJlUb0ImwClHmYgwLKrEYHreGxzvLVK31BkNS2Vwq235tPmJ9YByvMEqCWI3JVDFXYcoAtNXxGegdcpXr3U8dt0Ss.jpeg') center/cover no-repeat fixed;min-height:100vh;display:flex;flex-direction:column;}
-    .email-wrap{flex:1;display:flex;justify-content:center;align-items:center;padding:2rem 1rem;}
-    .email-card{text-align:center;background:#1e293b;padding:36px 28px;border-radius:15px;width:100%;max-width:380px;box-shadow:0 0 20px rgba(0,255,150,0.2);}
-    .email-card h1{font-size:clamp(1.1rem,4vw,1.5rem);margin-bottom:10px;}
-    .email-card p{margin-bottom:20px;color:#94a3b8;font-size:0.9rem;}
-    .email-card input{width:100%;padding:12px;border:none;border-radius:8px;outline:none;font-size:14px;margin-bottom:10px;}
-    .email-card button{width:100%;padding:12px;border:none;border-radius:8px;background:#22c55e;color:white;font-weight:bold;cursor:pointer;transition:0.3s;font-size:1rem;}
-    .email-card button:hover{background:#16a34a;}
-    .result-email{margin-top:20px;font-size:16px;font-weight:bold;}
-    .safe{color:#22c55e;} .breach{color:#ef4444;} .warn{color:#facc15;}
+    body {
+      background: linear-gradient(rgba(0,0,0,0.78),rgba(0,0,0,0.93)),
+                  url('img/tJfDsy74xZ08sfIIhFWJlUb0ImwClHmYgwLKrEYHreGxzvLVK31BkNS2Vwq235tPmJ9YByvMEqCWI3JVDFXYcoAtNXxGegdcpXr3U8dt0Ss.jpeg') center/cover no-repeat fixed;
+      min-height: 100vh;
+    }
+
+    .email-wrap {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 1rem 2rem;
+    }
+
+    .email-card {
+      background: rgba(13,22,38,0.95);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 580px;
+      backdrop-filter: blur(10px);
+    }
+
+    .email-card h2 {
+      text-align: center;
+      font-size: clamp(1.3rem,4vw,1.8rem);
+      margin-bottom: 0.3rem;
+      color: white;
+    }
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .input-row { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .input-row input {
+      flex: 1 1 200px;
+      padding: 13px 16px;
+      background: #060b14;
+      border: 1px solid rgba(56,189,248,0.25);
+      border-radius: 12px;
+      color: white; font-size: .95rem;
+      transition: border-color .2s;
+    }
+    .input-row input:focus { outline:none; border-color:#38bdf8; }
+    .check-btn {
+      padding: 13px 24px; border-radius: 12px;
+      background: linear-gradient(135deg,#38bdf8,#00ff88);
+      color: #060b14; font-weight: 700; font-size: .95rem;
+      border: none; cursor: pointer; white-space: nowrap;
+      transition: opacity .2s, transform .2s;
+    }
+    .check-btn:hover { opacity:.85; transform:translateY(-1px); }
+    .check-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    /* Scanning */
+    .scanning { display:none; text-align:center; padding:.8rem; color:#38bdf8; font-size:.85rem; margin-bottom:1rem; }
+    .scanning.show { display:block; }
+    .scan-bar {
+      height:3px;
+      background:linear-gradient(90deg,#38bdf8,#00ff88,#38bdf8);
+      background-size:200% 100%; border-radius:3px; margin-top:8px;
+      animation:scan 1.2s linear infinite;
+    }
+    @keyframes scan  { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    @keyframes fadeUp{ from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Result header */
+    .result-header {
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1.2rem;
+      display: none;
+      animation: fadeUp .4s ease;
+    }
+    .result-header.show { display:block; }
+    .result-header.safe    { background:rgba(0,255,136,0.07); border:1px solid rgba(0,255,136,0.3); }
+    .result-header.danger  { background:rgba(239,68,68,0.07);  border:1px solid rgba(239,68,68,0.3); }
+    .result-verdict { font-size:1.2rem; font-weight:700; margin-bottom:.3rem; }
+    .safe   .result-verdict { color:#00ff88; }
+    .danger .result-verdict { color:#ef4444; }
+    .result-sub { font-size:.83rem; opacity:.75; }
+    .safe   .result-sub { color:#00ff88; }
+    .danger .result-sub { color:#ef4444; }
+
+    /* Breach cards */
+    .breaches-section { display:none; margin-bottom:1.2rem; }
+    .breaches-section.show { display:block; }
+    .breaches-title {
+      font-size:.78rem; text-transform:uppercase;
+      letter-spacing:.1em; color:#ef4444;
+      margin-bottom:.8rem;
+    }
+    .breach-cards { display:flex; flex-direction:column; gap:.7rem; }
+    .breach-card {
+      background:rgba(239,68,68,0.06);
+      border:1px solid rgba(239,68,68,0.2);
+      border-radius:14px; padding:1rem 1.2rem;
+      animation: fadeUp .4s ease;
+    }
+    .breach-card-top {
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:.5rem;
+      margin-bottom:.4rem;
+    }
+    .breach-name { font-weight:700; color:#ef4444; font-size:.95rem; }
+    .breach-date {
+      font-size:.75rem; color:#64748b;
+      background:rgba(255,255,255,0.06);
+      padding:3px 10px; border-radius:999px;
+    }
+    .breach-desc { font-size:.82rem; color:#94a3b8; line-height:1.5; }
+    .breach-tags { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.6rem; }
+    .breach-tag {
+      font-size:.7rem; padding:2px 10px;
+      border-radius:999px;
+      background:rgba(239,68,68,0.1);
+      border:1px solid rgba(239,68,68,0.2);
+      color:#ef4444;
+    }
+
+    /* Tips */
+    .tips-box {
+      background:rgba(56,189,248,0.05);
+      border:1px solid rgba(56,189,248,0.15);
+      border-radius:14px; padding:1rem 1.2rem;
+      display:none;
+    }
+    .tips-box.show { display:block; }
+    .tips-title { font-size:.78rem; text-transform:uppercase; letter-spacing:.1em; color:#38bdf8; margin-bottom:.8rem; }
+    .tip { display:flex; gap:8px; font-size:.85rem; color:#94a3b8; padding:4px 0; }
+    .tip::before { content:'→'; color:#38bdf8; flex-shrink:0; }
+
+    /* Stats */
+    .db-stats { display:flex; justify-content:center; gap:1.5rem; margin-top:1.5rem; flex-wrap:wrap; }
+    .db-stat  { text-align:center; font-size:.78rem; color:#64748b; }
+    .db-stat span { display:block; font-size:1rem; font-weight:700; color:#38bdf8; }
   </style>
 </head>
 <body>
+
 <nav>
-  <div class="logo">
-  <img src="img/ChatGPT Image May 9, 2026, 09_23_54 AM.png" alt="CyberDefence Logo">
-</div>
+  <div class="logo">CyberDefence</div>
   <button class="nav-toggle" onclick="toggleNav()">☰</button>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
@@ -36,11 +165,44 @@
 
 <div class="email-wrap">
   <div class="email-card">
-    <h1>🛡️ Email Breach Checker</h1>
-    <p>Check if your email was exposed in data breaches</p>
-    <input type="email" id="emailInput" placeholder="Enter your email"/>
-    <button onclick="checkEmail()">Check Now</button>
-    <div id="result" class="result-email"></div>
+    <h2>📧 Email Breach Checker</h2>
+    <p class="subtitle">Check if your email was exposed in known data breaches</p>
+
+    <div class="input-row">
+      <input type="email" id="emailInput" placeholder="Enter your email address"/>
+      <button class="check-btn" id="checkBtn" onclick="checkEmail()">🔍 Check</button>
+    </div>
+
+    <!-- Scanning -->
+    <div class="scanning" id="scanning">
+      🔍 Searching breach database...
+      <div class="scan-bar"></div>
+    </div>
+
+    <!-- Result header -->
+    <div class="result-header" id="resultHeader">
+      <div class="result-verdict" id="resultVerdict"></div>
+      <div class="result-sub"    id="resultSub"></div>
+    </div>
+
+    <!-- Breach cards -->
+    <div class="breaches-section" id="breachesSection">
+      <div class="breaches-title">🔴 Breaches Found</div>
+      <div class="breach-cards" id="breachCards"></div>
+    </div>
+
+    <!-- Safety tips -->
+    <div class="tips-box" id="tipsBox">
+      <div class="tips-title">🛡 What to do now</div>
+      <div id="tipsList"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="db-stats">
+      <div class="db-stat"><span id="statBreaches">—</span>Known Breaches</div>
+      <div class="db-stat"><span id="statEmails">—</span>Emails Checked</div>
+      <div class="db-stat"><span id="statDomains">—</span>Breached Domains</div>
+    </div>
   </div>
 </div>
 
@@ -48,10 +210,11 @@
   import { db, auth } from './firebase-config.js';
   import { onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { ref, push }
+  import { ref, get, push, set }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   let currentUser = null;
+
   onAuthStateChanged(auth, user => {
     currentUser = user;
     const area = document.getElementById('authArea');
@@ -64,27 +227,138 @@
   window.doLogout  = () => signOut(auth).then(() => location.href='index.html');
   window.toggleNav = () => document.getElementById('navLinks').classList.toggle('open');
 
+  // Load stats
+  async function loadStats() {
+    try {
+      const [bSnap, eSnap] = await Promise.all([
+        get(ref(db,'breachDB/breaches')),
+        get(ref(db,'emailChecks'))
+      ]);
+      const breaches = bSnap.exists() ? Object.values(bSnap.val()) : [];
+      const emails   = eSnap.exists() ? Object.keys(eSnap.val()).length : 0;
+      const domains  = [...new Set(breaches.map(b => b.domain).filter(Boolean))].length;
+      document.getElementById('statBreaches').textContent = breaches.length;
+      document.getElementById('statEmails').textContent   = emails;
+      document.getElementById('statDomains').textContent  = domains;
+    } catch(e) {}
+  }
+  loadStats();
+
   window.checkEmail = async () => {
-    const email  = document.getElementById('emailInput').value.trim();
-    const result = document.getElementById('result');
-    if (!email) { result.innerHTML='⚠️ Please enter an email'; result.className='result-email warn'; return; }
+    const email   = document.getElementById('emailInput').value.trim().toLowerCase();
+    const btn     = document.getElementById('checkBtn');
+    const scan    = document.getElementById('scanning');
+    const header  = document.getElementById('resultHeader');
+    const section = document.getElementById('breachesSection');
+    const tips    = document.getElementById('tipsBox');
 
-    const breached = ['hack@gmail.com','test@123.com','admin@breach.com','leaked@test.com'];
-    const isBreached = breached.includes(email.toLowerCase());
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid email address'); return;
+    }
 
-    result.innerHTML  = isBreached
-      ? '🔴 BREACHED!<br>Found in data leaks.<br>⚠️ Change your password immediately!'
-      : '🟢 SAFE<br>No known breaches found.';
-    result.className  = 'result-email ' + (isBreached ? 'breach' : 'safe');
+    // Reset UI
+    btn.disabled = true;
+    header.className  = 'result-header';
+    section.className = 'breaches-section';
+    tips.className    = 'tips-box';
+    scan.classList.add('show');
 
     try {
-      await push(ref(db,'emailChecks'), {
-        email, isBreached,
-        user:      currentUser ? currentUser.email : 'anonymous',
-        timestamp: Date.now()
-      });
-    } catch(e) { console.log(e); }
+      const bSnap = await get(ref(db,'breachDB/breaches'));
+      const breaches = bSnap.exists() ? Object.values(bSnap.val()) : [];
+
+      // Check 1: exact email match
+      const emailMatches = breaches.filter(b =>
+        b.emails && b.emails.some(e => e.toLowerCase() === email)
+      );
+
+      // Check 2: domain match (e.g. if @gmail.com was breached)
+      const emailDomain  = email.split('@')[1];
+      const domainMatches = breaches.filter(b =>
+        b.domain && b.domain.toLowerCase() === emailDomain &&
+        !emailMatches.find(m => m.name === b.name)
+      );
+
+      const allMatches = [...emailMatches, ...domainMatches];
+
+      scan.classList.remove('show');
+
+      if (allMatches.length > 0) {
+        // BREACHED
+        document.getElementById('resultVerdict').textContent =
+          `🔴 Found in ${allMatches.length} breach${allMatches.length > 1 ? 'es' : ''}!`;
+        document.getElementById('resultSub').textContent =
+          `Your email was exposed in ${allMatches.length} known data breach${allMatches.length > 1 ? 'es' : ''}. Take action immediately!`;
+        header.className = 'result-header show danger';
+
+        // Show breach cards
+        document.getElementById('breachCards').innerHTML = allMatches.map(b => `
+          <div class="breach-card">
+            <div class="breach-card-top">
+              <span class="breach-name">🔓 ${b.name}</span>
+              <span class="breach-date">📅 ${b.date || 'Unknown date'}</span>
+            </div>
+            <div class="breach-desc">${b.description || 'Data from this service was exposed in a breach.'}</div>
+            <div class="breach-tags">
+              ${(b.dataTypes || ['Email']).map(t=>`<span class="breach-tag">${t}</span>`).join('')}
+            </div>
+          </div>`).join('');
+        section.className = 'breaches-section show';
+
+        // Tips for breached
+        document.getElementById('tipsList').innerHTML = `
+          <div class="tip">Change your password on ${allMatches[0].name} immediately</div>
+          <div class="tip">Change same password on ALL other sites you used it</div>
+          <div class="tip">Enable two-factor authentication (2FA) everywhere</div>
+          <div class="tip">Watch for suspicious emails or login attempts</div>
+          <div class="tip">Consider using a password manager like Bitwarden (free)</div>`;
+
+      } else {
+        // SAFE
+        document.getElementById('resultVerdict').textContent = '✅ No breaches found!';
+        document.getElementById('resultSub').textContent =
+          'Your email was not found in any breach in our database. Stay safe!';
+        header.className = 'result-header show safe';
+
+        // Tips for safe
+        document.getElementById('tipsList').innerHTML = `
+          <div class="tip">Keep using strong unique passwords for every site</div>
+          <div class="tip">Enable two-factor authentication (2FA) for extra security</div>
+          <div class="tip">Never reuse the same password across multiple sites</div>
+          <div class="tip">Regularly check this tool to stay updated</div>`;
+      }
+
+      tips.className = 'tips-box show';
+
+      // Save to Firebase
+      try {
+        await push(ref(db,'emailChecks'), {
+          email,
+          breached:     allMatches.length > 0,
+          breachCount:  allMatches.length,
+          breachNames:  allMatches.map(b=>b.name),
+          user:         currentUser?.email || 'anonymous',
+          timestamp:    Date.now()
+        });
+        // Increment total
+        const cSnap = await get(ref(db,'breachDB/totalChecks'));
+        await set(ref(db,'breachDB/totalChecks'), (cSnap.exists() ? cSnap.val() : 0) + 1);
+        loadStats();
+      } catch(e) {}
+
+    } catch(e) {
+      scan.classList.remove('show');
+      document.getElementById('resultVerdict').textContent = '⚠️ Check failed';
+      document.getElementById('resultSub').textContent = 'Could not connect to database. Try again.';
+      header.className = 'result-header show';
+    }
+
+    btn.disabled = false;
   };
+
+  document.getElementById('emailInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); window.checkEmail(); }
+  });
 </script>
 </body>
 </html>
